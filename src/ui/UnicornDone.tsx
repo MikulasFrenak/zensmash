@@ -7,6 +7,8 @@ import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { UI } from '@/i18n/ui';
 import { Locale } from '@/i18n/moments';
+import { HappyRainbowBadge } from '@/render/HappyRainbow';
+import { useCollection, totalCollected } from '@/state/collection';
 import { colors } from '@/theme/colors';
 
 interface Props {
@@ -17,6 +19,13 @@ interface Props {
 
 export function UnicornDone({ locale, broken, onClose }: Props) {
   const t = UI[locale];
+  const collection = useCollection();
+  const treasures = totalCollected(collection);
+  const treasureEmojis = [...collection.keys()].slice(0, 7);
+  // pick one celebration variant per completion, stable across re-renders
+  const variant = useRef(
+    t.doneVariants[Math.floor(Math.random() * t.doneVariants.length)],
+  ).current;
   const fade = useRef(new Animated.Value(0)).current;
   const bounce = useRef(new Animated.Value(0)).current;
 
@@ -36,12 +45,18 @@ export function UnicornDone({ locale, broken, onClose }: Props) {
   return (
     <Animated.View style={[styles.backdrop, { opacity: fade }]}>
       <View style={styles.card}>
-        <Animated.Text style={[styles.unicorn, { transform: [{ translateY: float }] }]}>
-          🦄
-        </Animated.Text>
-        <Text style={styles.title}>{t.doneTitle}</Text>
-        <Text style={styles.text}>{t.doneText}</Text>
+        <Animated.View style={[styles.unicorn, { transform: [{ translateY: float }] }]}>
+          <HappyRainbowBadge size={170} />
+        </Animated.View>
+        <Text style={styles.title}>{variant.title}</Text>
+        <Text style={styles.text}>{variant.text}</Text>
         <Text style={styles.stat}>{t.blocksBroken(broken)}</Text>
+        {treasures > 0 && (
+          <View style={styles.treasureRow}>
+            <Text style={styles.treasureEmojis}>{treasureEmojis.join(' ')}</Text>
+            <Text style={styles.treasureCount}>🎁 ×{treasures}</Text>
+          </View>
+        )}
         <Pressable style={styles.button} onPress={onClose}>
           <Text style={styles.buttonText}>{t.doneButton}</Text>
         </Pressable>
@@ -59,7 +74,7 @@ const styles = StyleSheet.create({
     zIndex: 30,
   },
   card: { alignItems: 'center', paddingHorizontal: 32 },
-  unicorn: { fontSize: 96, marginBottom: 12 },
+  unicorn: { marginBottom: 12 },
   title: { fontSize: 26, fontWeight: '700', color: colors.textPrimary, textAlign: 'center' },
   text: {
     fontSize: 17,
@@ -68,6 +83,9 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   stat: { fontSize: 14, color: colors.textSecondary, marginTop: 10 },
+  treasureRow: { alignItems: 'center', marginTop: 8, gap: 3 },
+  treasureEmojis: { fontSize: 22, letterSpacing: 2 },
+  treasureCount: { fontSize: 13, fontWeight: '700', color: colors.textSecondary },
   button: {
     marginTop: 24,
     backgroundColor: colors.sage,
