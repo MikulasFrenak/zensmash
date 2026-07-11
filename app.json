@@ -1,0 +1,25 @@
+{
+  "expo": {
+    "name": "ZenSmash",
+    "slug": "zensmash",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "backgroundColor": "#F6FBF7",
+    "splash": {
+      "backgroundColor": "#F6FBF7",
+      "resizeMode": "contain"
+    },
+    "ios": {
+      "bundleIdentifier": "com.mikulasfrenak.zensmash",
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.mikulasfrenak.zensmash",
+      "adaptiveIcon": {
+        "backgroundColor": "#A7D7B8"
+      }
+    },
+    "plugins": []
+  }
+}
