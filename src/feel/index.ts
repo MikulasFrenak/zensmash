@@ -4,7 +4,7 @@
  */
 import { getSettings } from '@/state/settings';
 import { hapticHit, hapticShatter } from './haptics';
-import { playCrack, playHello, playShatter } from './sound';
+import { playBloom, playCrack, playHello, playPrize, playShatter } from './sound';
 
 export function feelHit() {
   const s = getSettings();
@@ -21,4 +21,16 @@ export function feelShatter() {
 /** A visitor waves hello — cing cing klang 🔔 */
 export function feelHello() {
   if (getSettings().sound) playHello();
+}
+
+/** A surprise pops free — whooooaaa! */
+export function feelPrize() {
+  if (getSettings().sound) playPrize();
+}
+
+/** The mandala blooms fully — session complete 🌸 */
+export function feelBloom() {
+  const s = getSettings();
+  if (s.haptics) hapticShatter();
+  if (s.sound) playBloom();
 }
