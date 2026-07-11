@@ -1,13 +1,10 @@
-/**
- * The "juice" API (S4). One place for everything that makes a hit feel good.
- * Sound is added here later — callers never change.
- */
+/** Raw haptic impacts. Use via feel/index.ts, never directly. */
 import * as Haptics from 'expo-haptics';
 
-export function feelHit() {
+export function hapticHit() {
   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
 }
 
-export function feelShatter() {
+export function hapticShatter() {
   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
 }

@@ -3,9 +3,13 @@
  */
 import { CrackOrigin } from './cracks';
 
-export const GRID_COLS = 5;
-export const GRID_ROWS = 7;
-export const TAPS_TO_BREAK = 3;
+export const GRID_COLS = 3;
+export const GRID_ROWS = 5;
+export const TAPS_TO_BREAK = 5;
+
+/** Funny objects hiding inside surprise blocks (~1 in 6). */
+export const PRIZES = ['🦆', '🧦', '🍩', '🥑', '🐢', '🍕', '🎈', '🧸', '🌵', '🛁', '🐙', '🧀'];
+const PRIZE_CHANCE = 1 / 6;
 
 export interface Block {
   id: string;
@@ -16,6 +20,8 @@ export interface Block {
   colorIndex: number;
   /** T2: one crack system per received hit */
   cracks: CrackOrigin[];
+  /** surprise inside — revealed as the block cracks, pops free on break */
+  prize?: string;
 }
 
 let nextId = 0;
@@ -29,6 +35,10 @@ export function createBlock(col: number, row: number): Block {
     damage: 0,
     colorIndex: Math.floor(Math.random() * 4),
     cracks: [],
+    prize:
+      Math.random() < PRIZE_CHANCE
+        ? PRIZES[Math.floor(Math.random() * PRIZES.length)]
+        : undefined,
   };
 }
 

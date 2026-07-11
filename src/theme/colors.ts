@@ -1,5 +1,7 @@
 /**
  * ZenSmash palette — calm green/white base, rainbow only as reward.
+ * (Ice-blue experiment reverted — green felt better. Materials like ice
+ * can return later as unlockable themes.)
  */
 export const colors = {
   // Calm base
@@ -11,11 +13,13 @@ export const colors = {
   textPrimary: '#2E4B3C',
   textSecondary: '#7BA08C',
 
-  // Block face shades (green family)
+  // Block face shades (green family) + gradient tops and 3D sides
   blockFaces: ['#B9E4C9', '#A7D7B8', '#93C9A6', '#CDEBD8'],
+  blockFaceTops: ['#D3F0DE', '#C4E7D0', '#B0DBBF', '#E0F5E9'],
+  blockSides: ['#8FBFA3', '#7FB394', '#6FA483', '#A3CDB4'],
   blockCrack: '#4E8A6A',
 
-  // Rainbow — reserved for shatter particle bursts (the reward)
+  // Rainbow — reserved for progress arcs, shatter bursts, charge sparks
   rainbow: [
     '#FF6B6B',
     '#FFA94D',

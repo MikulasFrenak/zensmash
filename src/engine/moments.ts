@@ -3,11 +3,11 @@
  */
 
 export const MILESTONES = new Set([10, 25, 50, 100, 200, 500, 1000]);
-const RANDOM_CHANCE = 1 / 8;
+const RANDOM_CHANCE = 1 / 5;
 
-/** Show a moment on milestones, otherwise ~1 in 8 breaks. */
+/** Always on the first break and milestones, otherwise ~1 in 5 breaks. */
 export function shouldShowMoment(breakCount: number, rand: () => number = Math.random): boolean {
-  if (MILESTONES.has(breakCount)) return true;
+  if (breakCount === 1 || MILESTONES.has(breakCount)) return true;
   return rand() < RANDOM_CHANCE;
 }
 

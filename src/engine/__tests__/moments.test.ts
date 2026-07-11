@@ -7,7 +7,11 @@ describe('moments engine', () => {
     }
   });
 
-  it('shows randomly ~1 in 8 otherwise', () => {
+  it('always shows on the very first break', () => {
+    expect(shouldShowMoment(1, () => 0.99)).toBe(true);
+  });
+
+  it('shows randomly ~1 in 5 otherwise', () => {
     expect(shouldShowMoment(3, () => 0.01)).toBe(true);
     expect(shouldShowMoment(3, () => 0.99)).toBe(false);
   });

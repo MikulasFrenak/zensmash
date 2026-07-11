@@ -20,6 +20,8 @@
         "backgroundColor": "#A7D7B8"
       }
     },
-    "plugins": []
+    "plugins": [
+      "expo-audio"
+    ]
   }
 }
