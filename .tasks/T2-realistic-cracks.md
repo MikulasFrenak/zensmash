@@ -1,4 +1,8 @@
-# T2 — Realistic crack rendering
+# T2 — Realistic crack rendering ✅ DONE
+
+**Outcome:** Option A shipped — procedural crack systems seeded by the exact tap point (`src/engine/cracks.ts`, deterministic, unit-tested), one system per hit, thicker strokes per hit, white chip offset for depth. Ice chips fly from the tap point on ~75% of hits.
+
+---
 
 **Goal:** Damage should read as *cracking material*, not pen scratches. Cracks should feel physical.
 

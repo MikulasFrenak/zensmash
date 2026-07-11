@@ -1,4 +1,8 @@
-# T3 — Happy moments after breaks
+# T3 — Happy moments after breaks ✅ DONE (evolved)
+
+**Outcome:** Evolved beyond the original plan — every break rewards: hidden emoji prize (~1 in 6) or a phrase riding a flying cloud (not a popup). Native pools of 23–27 lines × 8 languages in `src/i18n/moments.ts`. Language switch lives in the 🌿 menu.
+
+---
 
 **Goal:** After breaking a block, occasionally delight the player with a short funny/positive line. Leave happier than you came.
 
