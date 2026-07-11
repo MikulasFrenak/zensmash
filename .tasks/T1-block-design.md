@@ -1,4 +1,8 @@
-# T1 — Block color & design evaluation
+# T1 — Block color & design evaluation ✅ DONE
+
+**Outcome:** Option A confirmed after an ice-blue experiment (reverted — green is the brand; ice returns later as a Zen Pack theme). Final look: flat 2D glassy cubes — gradient face, top sheen, glass bubbles, soft shadow, squash on hit. 3D isometric faces were tried and rejected.
+
+---
 
 **Goal:** Blocks should feel tactile and pleasant, not flat. Decide palette direction.
 

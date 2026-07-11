@@ -3,6 +3,14 @@
 
 Structured per the [ai-delivery-playbook](https://github.com/MikulasFrenak/ai-delivery-playbook) lifecycle: **Requirements → Architecture → Implementation → Verification → Release**.
 
+> **Status (2026-07-11): Epics 1 & 2 done and verified on a real iPhone — MVP is feature-complete.**
+> Delivered beyond plan: session arc (30 breaks → shining mandala finale → results → new cycle),
+> hidden emoji surprises + 🎁 treasure collection, blooming lotus mandala, rainbow-as-progress-bar
+> with charge sparks, living sky (levitating sun, random clouds, gentle rain), blooming footer
+> meadow, fireflies, waving animal visitors with a synthesized voice, 6 shatter melodies + voices,
+> phrases and full UI in 8 languages (EN/SK/CZ/HU/PL/DE/FR/ES), squash-and-stretch game feel.
+> Remaining for stores: Epic 3 below + persistence (AsyncStorage for settings & treasures).
+
 ---
 
 ## 1. Vision
@@ -24,23 +32,25 @@ A dead-simple mobile game where you break cubes/blocks with taps. No score press
 
 Per the playbook, each Story below gets `analyze-story` treatment (summary, testable AC, split into subtasks) as a GitHub Issue before implementation.
 
-### Epic 1 — Core smash loop (MVP)
+### Epic 1 — Core smash loop (MVP) ✅ done
 
-| Story | Acceptance criteria (testable) |
-|---|---|
-| S1: Block field | A grid/stack of 3D-looking cubes renders at 60fps on mid-range devices |
-| S2: Tap to crack | Tapping a block damages it (visual crack states), 2–3 taps destroys it |
-| S3: Shatter effect | Destruction spawns physics debris + rainbow particle burst, cleaned up after ~2s |
-| S4: Haptics + sound | Each hit triggers light haptic; destruction triggers medium haptic + crack sound |
-| S5: Endless refill | New blocks drop in with soft physics when field empties |
+| Story | Acceptance criteria (testable) | Delivered |
+|---|---|---|
+| S1: Block field | Grid of cubes renders at 60fps on mid-range devices | ✅ 3×5 glassy squares: gradient faces, glass bubbles, organic jitter |
+| S2: Tap to crack | Tapping damages a block (visual crack states) | ✅ 5 taps to break; procedural cracks from the exact tap point, thicker per hit; subtle squash; ice chips fly |
+| S3: Shatter effect | Destruction spawns debris + rainbow burst | ✅ rainbow burst + charge sparks streaming into the sky rainbow |
+| S4: Haptics + sound | Hit haptic; destruction haptic + sound | ✅ `feel` API; marimba crack, 6 random music-box shatter melodies (all synthesized in-house) |
+| S5: Endless refill | New blocks drop in when field empties | ✅ staggered ease-out drop-in (also on first load); paused for the finale |
 
-### Epic 2 — Calm shell
+### Epic 2 — Calm shell ✅ done
 
-| Story | Acceptance criteria |
-|---|---|
-| S6: Home screen | Green/white minimal home, one big "Play" (or no menu at all — open straight into the field) |
-| S7: Session end | Gentle summary screen (blocks broken, time), no scores/leaderboards |
-| S8: Settings | Sound/haptics/particles toggles; respects system reduce-motion |
+| Story | Acceptance criteria | Delivered |
+|---|---|---|
+| S6: Home screen | No menu — straight into the field | ✅ plus a living scene: levitating smiling sun, 5 random clouds, occasional rain, blooming meadow, fireflies, waving animal visitors |
+| S7: Session end | Gentle summary, no scores | ✅ session arc: 30 breaks (2 fields) → mandala shines in full rainbow to a bloom chord (4.5 s) → results with 5 rhyming variants + treasures → begin again |
+| S8: Settings | Sound/haptics/particles toggles | ✅ 🌿 menu with toggles + 8-language selector; 🎁 treasures modal. Still open: respect system reduce-motion; persist settings/treasures (AsyncStorage) |
+
+**Added beyond plan:** hidden emoji prizes (~1 in 6 cubes, revealed through the glass as it cracks, "whooooaaa" pop, collected as treasures); jokes riding flying clouds (native phrase pools, not translations); lotus mandala blooming petal-per-break behind the cubes; rainbow as a color-fill progress bar.
 
 ### Epic 3 — Release readiness
 
@@ -138,23 +148,26 @@ Also needed: privacy policy URL (static page is fine), target Android API 35+, a
 
 ## 7. Roadmap
 
-| Phase | Weeks | Outcome |
-|---|---|---|
-| 0 — Setup | 1 | Repo, CLAUDE.md, Expo scaffold, CI, board with S1–S11 |
-| 1 — Core loop | 2–3 | S1–S5: smashing feels *good* on a real device |
-| 2 — Calm shell | 4 | S6–S8 + design polish pass |
-| 3 — Play closed test | 5–6 | 12+ testers, 14 days, tune feel from feedback |
-| 4 — Launch | 7 | S9–S10, submit both stores |
-| 5 — v1.x | 8+ | Zen Pack IAP, new materials, soundscapes |
+| Phase | Weeks | Outcome | Status |
+|---|---|---|---|
+| 0 — Setup | 1 | Repo, CLAUDE.md, Expo scaffold, CI, board with S1–S11 | ✅ done (CI/board still optional) |
+| 1 — Core loop | 2–3 | S1–S5: smashing feels *good* on a real device | ✅ done — in day 1! |
+| 2 — Calm shell | 4 | S6–S8 + design polish pass | ✅ done — plus session arc, prizes, mandala, visitors |
+| 3 — Play closed test | 5–6 | 12+ testers, 14 days, tune feel from feedback | ⏳ next — recruit testers now |
+| 4 — Launch | 7 | S9–S10, submit both stores | ⏳ |
+| 5 — v1.x | 8+ | Zen Pack IAP, new materials (ice theme is ready in git history), soundscapes | ⏳ |
 
-~7 weeks part-time to stores, dominated by Google's mandatory 14-day test window — start it as early as the core loop is fun.
+The 14-day Google Play test window is now the critical path — start recruiting the 12 testers immediately.
 
 ---
 
 ## 8. Next actions
 
-1. Confirm this architecture (playbook rule: explicit sign-off before code).
-2. Create repo + GitHub Project, file S1–S11 as Issues.
-3. `npx create-expo-app zensmash` and run `analyze-story` on S1.
+1. ~~Confirm architecture~~ ✅ · ~~Create repo~~ ✅ · ~~Build MVP~~ ✅
+2. Persist settings + treasures with AsyncStorage (`npx expo install @react-native-async-storage/async-storage`).
+3. Respect system reduce-motion (S8 leftover).
+4. App icon + splash (S9) — the HappyRainbow badge is a natural icon candidate.
+5. Privacy policy page + store compliance forms (S10).
+6. EAS Build + recruit 12 Play-closed-test friends — start the 14-day clock (Phase 3).
 
 Sources: [Expo: Matter.js + Skia physics](https://expo.dev/blog/build-2d-game-style-physics-with-matter-js-and-react-native-skia) · [RN game engine landscape 2026](https://dev.to/grzott/the-react-native-game-engine-gap-in-2026-rnge-skia-phaser-in-webview-expo-gl-55hp) · [Store fees 2026](https://weekonelabs.com/blog/app-store-fees-explained-2026) · [Play closed-testing rule](https://support.google.com/googleplay/android-developer/answer/14151465?hl=en) · [Apple Small Business Program](https://www.revenuecat.com/blog/engineering/small-business-program/)
