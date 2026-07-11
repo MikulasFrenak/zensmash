@@ -3,6 +3,7 @@ import { createAudioPlayer, type AudioPlayer } from 'expo-audio';
 
 let crack: AudioPlayer | null = null;
 let shatter: AudioPlayer | null = null;
+let hello: AudioPlayer | null = null;
 
 function ensure() {
   if (!crack) {
@@ -12,6 +13,10 @@ function ensure() {
   if (!shatter) {
     shatter = createAudioPlayer(require('../../assets/sounds/shatter.wav'));
     shatter.volume = 0.6;
+  }
+  if (!hello) {
+    hello = createAudioPlayer(require('../../assets/sounds/hello.wav'));
+    hello.volume = 0.55;
   }
 }
 
@@ -28,5 +33,13 @@ export function playShatter() {
     ensure();
     shatter!.seekTo(0);
     shatter!.play();
+  } catch {}
+}
+
+export function playHello() {
+  try {
+    ensure();
+    hello!.seekTo(0);
+    hello!.play();
   } catch {}
 }

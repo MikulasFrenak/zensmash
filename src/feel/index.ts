@@ -4,7 +4,7 @@
  */
 import { getSettings } from '@/state/settings';
 import { hapticHit, hapticShatter } from './haptics';
-import { playCrack, playShatter } from './sound';
+import { playCrack, playHello, playShatter } from './sound';
 
 export function feelHit() {
   const s = getSettings();
@@ -16,4 +16,9 @@ export function feelShatter() {
   const s = getSettings();
   if (s.haptics) hapticShatter();
   if (s.sound) playShatter();
+}
+
+/** A visitor waves hello — cing cing klang 🔔 */
+export function feelHello() {
+  if (getSettings().sound) playHello();
 }

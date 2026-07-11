@@ -3,7 +3,9 @@
  * and wanders off. Pure delight, zero purpose — the best kind.
  */
 import React, { useEffect, useRef } from 'react';
-import { Animated, StyleSheet, Text } from 'react-native';
+import { Animated, StyleSheet } from 'react-native';
+
+import { feelHello } from '@/feel';
 
 export const VISITORS = ['🐢', '🦆', '🐰', '🐸', '🦔', '🐿️', '🐧', '🐌'];
 
@@ -20,6 +22,7 @@ export function Visitor({ emoji, side, onDone }: Props) {
   onDoneRef.current = onDone;
 
   useEffect(() => {
+    const chime = setTimeout(() => feelHello(), 750); // ding as it arrives
     Animated.sequence([
       // wander in
       Animated.timing(slide, { toValue: 1, duration: 900, useNativeDriver: true }),
@@ -38,6 +41,7 @@ export function Visitor({ emoji, side, onDone }: Props) {
     ]).start(({ finished }) => {
       if (finished) onDoneRef.current();
     });
+    return () => clearTimeout(chime);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
