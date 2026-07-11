@@ -45,7 +45,6 @@ export function FloatingMoment({ text, x, y, onDone }: Props) {
   });
 
   const left = Math.min(Math.max(x - 120, 8), width - 248);
-  const tailShift = Math.min(Math.max(x - left - 6, 16), 224);
 
   return (
     <Animated.View
@@ -58,7 +57,8 @@ export function FloatingMoment({ text, x, y, onDone }: Props) {
       <View style={styles.bubble}>
         <Text style={styles.text}>{text}</Text>
       </View>
-      <View style={[styles.tail, { marginLeft: tailShift }]} />
+      {/* tail stays centered under the bubble — never detaches on short texts */}
+      <View style={styles.tail} />
     </Animated.View>
   );
 }
@@ -88,6 +88,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   tail: {
+    alignSelf: 'center',
     width: 0,
     height: 0,
     borderLeftWidth: 7,

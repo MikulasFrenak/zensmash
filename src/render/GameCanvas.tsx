@@ -7,6 +7,7 @@ import {
   BlurMask,
   Canvas,
   Circle,
+  Group,
   LinearGradient,
   Path,
   RoundedRect,
@@ -30,8 +31,10 @@ import { MOMENTS, Locale } from '@/i18n/moments';
 import { colors } from '@/theme/colors';
 import { feelHit, feelShatter } from '@/feel';
 import { getSettings } from '@/state/settings';
+import { addToCollection } from '@/state/collection';
 import { FloatingMoment } from './FloatingMoment';
 import { PrizePop } from './PrizePop';
+import { Unicorn } from './Unicorn';
 import { UnicornDone } from '@/ui/UnicornDone';
 
 const GAP = 14;
@@ -94,6 +97,13 @@ export function GameCanvas({
   const [dropStart, setDropStart] = useState(() => Date.now());
   const [, forceFrame] = useState(0);
   const lastLineIndex = useRef(-1);
+  const lastHit = useRef<{ id: string; time: number } | null>(null);
+
+  // Ambient sky: gentle 20fps tick so sun and clouds levitate softly
+  React.useEffect(() => {
+    const id = setInterval(() => forceFrame((f) => f + 1), 50);
+    return () => clearInterval(id);
+  }, []);
 
   // S5: drive re-renders while blocks are dropping in (mount + every refill)
   React.useEffect(() => {
@@ -233,6 +243,35 @@ export function GameCanvas({
     return () => cancelAnimationFrame(raf);
   }, [breaks]);
 
+  // Fluffy clouds — new random sky every time you start the game
+  const clouds = useMemo(
+    () =>
+      Array.from({ length: 5 }, (_, i) => ({
+        cx: 30 + Math.random() * (width - 60),
+        cy: 26 + Math.random() * Math.max(60, fieldTop * 0.75),
+        s: 0.65 + Math.random() * 0.5,
+        phase: Math.random() * Math.PI * 2,
+        speed: 2600 + Math.random() * 1800,
+      })),
+    [width, fieldTop],
+  );
+
+  // Footer meadow — grass tufts with flowers along the bottom edge,
+  // randomized each game start
+  const grassTufts = useMemo(
+    () =>
+      Array.from({ length: 9 }, (_, i) => ({
+        cx: (width / 9) * i + Math.random() * (width / 9),
+        cy: height - 2 - Math.random() * 8,
+        s: 0.7 + Math.random() * 0.6,
+        phase: Math.random() * Math.PI * 2,
+        speed: 2400 + Math.random() * 1600,
+        flower: i % 3 !== 1,
+        pink: i % 2 === 0,
+      })),
+    [width, height],
+  );
+
   // Rainbow = progress bar of color: arcs are always full, each stripe
   // saturates from ghost-faint to vivid as you smash. Red first.
   const rainbowApex = fieldTop * 0.38;
@@ -249,7 +288,7 @@ export function GameCanvas({
     return colors.rainbow.map((color, i) => {
       // stripe i starts charging after i*2 breaks, fully vivid ~15 later
       const p = Math.min(1, Math.max(0, (shown - i * 2) / 15));
-      const r = rBase - i * (stroke - 3); // slight overlap → colors blend
+      const r = rBase - i * stroke; // bands touch cleanly, no muddy overlap
       const pt = (a: number) =>
         `${(cx + r * Math.cos(a)).toFixed(1)} ${(cy + r * Math.sin(a)).toFixed(1)}`;
       return {
@@ -257,7 +296,7 @@ export function GameCanvas({
         d: `M ${pt(startA)} A ${r.toFixed(1)} ${r.toFixed(1)} 0 0 1 ${pt(midA)} A ${r.toFixed(1)} ${r.toFixed(1)} 0 0 1 ${pt(endA)}`,
         color,
         stroke,
-        alpha: 0.06 + 0.42 * p, // ghost of the whole rainbow, filling with color
+        alpha: 0.05 + 0.5 * p, // ghost of the whole rainbow, filling with color
       };
     });
   })();
@@ -288,6 +327,7 @@ export function GameCanvas({
             y: r.y + r.h / 2,
           };
           setPrizes((ps) => [...ps, p]);
+          addToCollection(target.prize);
         } else {
           showMoment(r.x + r.w / 2, r.y + r.h / 2);
         }
@@ -300,6 +340,7 @@ export function GameCanvas({
         onBlockBroken?.();
       } else {
         feelHit();
+        lastHit.current = { id: target.id, time: Date.now() }; // squash!
         // chips fly out of the crack — bigger hits chip more often
         if (getSettings().particles && Math.random() < 0.75) {
           spawnChips(tx, ty, target.colorIndex);
@@ -328,22 +369,6 @@ export function GameCanvas({
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>
-      {/* the unicorn slowly materializes behind the blocks as you smash */}
-      {unicornProgress > 0.02 && (
-        <Text
-          pointerEvents="none"
-          style={{
-            position: 'absolute',
-            left: width / 2 - unicornSize / 2,
-            top: fieldTop + ((blockH + GAP) * GRID_ROWS) / 2 - unicornSize / 2,
-            fontSize: unicornSize,
-            opacity: unicornProgress * 0.85,
-          }}
-        >
-          🦄
-        </Text>
-      )}
-
       {/* hidden prizes — showing through the translucent cube as it cracks */}
       {blocks.map((b) => {
         if (!b.prize || b.damage === 0) return null;
@@ -366,7 +391,7 @@ export function GameCanvas({
       })}
       <GestureDetector gesture={tap}>
         <Canvas style={{ flex: 1, backgroundColor: 'transparent' }}>
-          {/* Background rainbow, built line by line from your breaks */}
+          {/* Background rainbow — deepest layer of the sky */}
           {rainbowArcs.map((arc, i) => (
             <Path
               key={`arc${i}`}
@@ -378,9 +403,145 @@ export function GameCanvas({
               opacity={arc.alpha}
             >
               {/* soft edges — neighbouring colors melt into each other */}
-              <BlurMask blur={5} style="normal" />
+              <BlurMask blur={2} style="normal" />
             </Path>
           ))}
+
+          {/* smiling sun — levitating gently in the corner */}
+          {(() => {
+            const sunX = width - 52 + Math.sin(now / 2100) * 3;
+            const sunY = 66 + Math.sin(now / 1400) * 6;
+            return (
+              <>
+                <Circle cx={sunX} cy={sunY} r={22} color="#FFE066" opacity={0.9} />
+                {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => {
+                  const a = (Math.PI * 2 * i) / 8 + now / 9000; // slow ray spin
+                  return (
+                    <Path
+                      key={`ray${i}`}
+                      path={`M ${sunX + Math.cos(a) * 28} ${sunY + Math.sin(a) * 28} L ${sunX + Math.cos(a) * 36} ${sunY + Math.sin(a) * 36}`}
+                      style="stroke"
+                      strokeWidth={4}
+                      strokeCap="round"
+                      color="#FFE066"
+                      opacity={0.8}
+                    />
+                  );
+                })}
+                <Path
+                  path={`M ${sunX - 8} ${sunY - 2} Q ${sunX - 6} ${sunY + 2} ${sunX - 4} ${sunY - 2}`}
+                  style="stroke"
+                  strokeWidth={2.4}
+                  strokeCap="round"
+                  color="#B8860B"
+                  opacity={0.7}
+                />
+                <Path
+                  path={`M ${sunX + 4} ${sunY - 2} Q ${sunX + 6} ${sunY + 2} ${sunX + 8} ${sunY - 2}`}
+                  style="stroke"
+                  strokeWidth={2.4}
+                  strokeCap="round"
+                  color="#B8860B"
+                  opacity={0.7}
+                />
+                <Path
+                  path={`M ${sunX - 6} ${sunY + 6} Q ${sunX} ${sunY + 12} ${sunX + 6} ${sunY + 6}`}
+                  style="stroke"
+                  strokeWidth={2.6}
+                  strokeCap="round"
+                  color="#B8860B"
+                  opacity={0.7}
+                />
+              </>
+            );
+          })()}
+
+          {/* fluffy clouds levitating across the sky */}
+          {clouds.map((c, i) => {
+            const dx = Math.sin(now / c.speed + c.phase) * 12;
+            const dy = Math.sin(now / (c.speed * 0.6) + c.phase * 1.7) * 5;
+            const cx = c.cx + dx;
+            const cy = c.cy + dy;
+            return (
+              <React.Fragment key={`cloud${i}`}>
+                {/* subtle shadow under the cloud for visibility */}
+                <Circle cx={cx} cy={cy + 6 * c.s} r={17 * c.s} color={colors.forest} opacity={0.06} />
+                <Circle cx={cx} cy={cy} r={16 * c.s} color="#FFFFFF" opacity={0.95} />
+                <Circle cx={cx + 15 * c.s} cy={cy + 3 * c.s} r={13 * c.s} color="#FFFFFF" opacity={0.95} />
+                <Circle cx={cx - 15 * c.s} cy={cy + 4 * c.s} r={12 * c.s} color="#FFFFFF" opacity={0.95} />
+                <Circle cx={cx + 4 * c.s} cy={cy - 7 * c.s} r={11 * c.s} color="#FFFFFF" opacity={0.95} />
+              </React.Fragment>
+            );
+          })}
+
+          {/* footer meadow — grass and flowers swaying by the buttons */}
+          {grassTufts.map((g, i) => {
+            const sway = Math.sin(now / g.speed + g.phase) * 3;
+            const gx = g.cx;
+            const gy = g.cy;
+            const s = g.s;
+            return (
+              <React.Fragment key={`grass${i}`}>
+                {/* mound sitting on the bottom edge */}
+                <Circle cx={gx} cy={gy + 4 * s} r={10 * s} color={colors.sage} />
+                <Circle cx={gx + 9 * s} cy={gy + 6 * s} r={8 * s} color={colors.blockFaces[2]} />
+                <Circle cx={gx - 9 * s} cy={gy + 6 * s} r={8 * s} color={colors.mint} />
+                {/* blades swaying in the breeze */}
+                <Path
+                  path={`M ${gx - 4 * s} ${gy - 2 * s} Q ${gx - 6 * s + sway} ${gy - 14 * s} ${gx - 3 * s + sway} ${gy - 18 * s}`}
+                  style="stroke"
+                  strokeWidth={2 * s}
+                  strokeCap="round"
+                  color={colors.forest}
+                  opacity={0.8}
+                />
+                <Path
+                  path={`M ${gx + 1 * s} ${gy - 3 * s} Q ${gx + 1 * s + sway} ${gy - 16 * s} ${gx + 3 * s + sway} ${gy - 21 * s}`}
+                  style="stroke"
+                  strokeWidth={2 * s}
+                  strokeCap="round"
+                  color={colors.forest}
+                  opacity={0.8}
+                />
+                <Path
+                  path={`M ${gx + 5 * s} ${gy - 2 * s} Q ${gx + 7 * s + sway} ${gy - 12 * s} ${gx + 6 * s + sway} ${gy - 15 * s}`}
+                  style="stroke"
+                  strokeWidth={1.8 * s}
+                  strokeCap="round"
+                  color={colors.forest}
+                  opacity={0.7}
+                />
+                {/* flower bobbing on top of a blade */}
+                {g.flower && (
+                  <>
+                    {[0, 1, 2, 3, 4].map((p) => {
+                      const a = (Math.PI * 2 * p) / 5;
+                      return (
+                        <Circle
+                          key={`petal${p}`}
+                          cx={gx + 3 * s + sway + Math.cos(a) * 3.6 * s}
+                          cy={gy - 22 * s + Math.sin(a) * 3.6 * s}
+                          r={2.5 * s}
+                          color={g.pink ? '#FFB3C1' : '#FFFFFF'}
+                        />
+                      );
+                    })}
+                    <Circle cx={gx + 3 * s + sway} cy={gy - 22 * s} r={2.3 * s} color="#FFE066" />
+                  </>
+                )}
+              </React.Fragment>
+            );
+          })}
+
+          {/* the unicorn slowly materializes behind the blocks as you smash */}
+          {unicornProgress > 0.02 && (
+            <Unicorn
+              x={width / 2 - unicornSize / 2}
+              y={fieldTop + ((blockH + GAP) * GRID_ROWS) / 2 - unicornSize / 2}
+              size={unicornSize}
+              opacity={unicornProgress * 0.9}
+            />
+          )}
 
           {/* rainbow charge sparks flying up from broken cubes */}
           {chargers.map((ch) => {
@@ -409,31 +570,37 @@ export function GameCanvas({
             const ease = 1 - Math.pow(1 - p, 3);
             const dy = -(r.y + r.h + 40) * (1 - ease);
             const y = r.y + dy;
-            const off = Math.min(GAP - 3, r.w * 0.11); // subtle isometric depth
+            // squash & stretch on hit — impact you can see
+            let sx = 1;
+            let sy = 1;
+            const hit = lastHit.current;
+            if (hit && hit.id === b.id) {
+              const dt = now - hit.time;
+              if (dt >= 0 && dt < 140) {
+                // gentle press — subtle, not rubbery
+                const q = Math.sin((Math.PI * dt) / 140) * 0.04;
+                sx = 1 + q * 0.5;
+                sy = 1 - q;
+              }
+            }
             return (
-              <React.Fragment key={b.id}>
-                {/* soft ground shadow (light from top-left) */}
+              <Group
+                key={b.id}
+                transform={[{ scaleX: sx }, { scaleY: sy }]}
+                origin={vec(r.x + r.w / 2, y + r.h)}
+              >
+                {/* soft drop shadow */}
                 <RoundedRect
-                  x={r.x + 5}
-                  y={y + 7}
+                  x={r.x + 2}
+                  y={y + 4}
                   width={r.w}
                   height={r.h}
-                  r={12}
+                  r={14}
                   color={colors.forest}
-                  opacity={0.10}
-                />
-                {/* top face */}
-                <Path
-                  path={`M ${r.x + 2} ${y} L ${r.x + off} ${y - off} L ${r.x + r.w + off - 2} ${y - off} L ${r.x + r.w - 2} ${y} Z`}
-                  color={colors.blockFaceTops[b.colorIndex]}
-                />
-                {/* right side face */}
-                <Path
-                  path={`M ${r.x + r.w} ${y + 2} L ${r.x + r.w + off} ${y - off + 2} L ${r.x + r.w + off} ${y + r.h - off} L ${r.x + r.w} ${y + r.h - 2} Z`}
-                  color={colors.blockSides[b.colorIndex]}
+                  opacity={0.12}
                 />
                 {/* translucent face with vertical light gradient */}
-                <RoundedRect x={r.x} y={y} width={r.w} height={r.h} r={12} opacity={0.85}>
+                <RoundedRect x={r.x} y={y} width={r.w} height={r.h} r={14} opacity={0.9}>
                   <LinearGradient
                     start={vec(r.x, y)}
                     end={vec(r.x, y + r.h)}
@@ -450,6 +617,23 @@ export function GameCanvas({
                   color="#FFFFFF"
                   opacity={0.30}
                 />
+                {/* tiny glass bubbles — deterministic per block */}
+                {[0, 1, 2, 3, 4, 5, 6].map((k) => {
+                  const hb = hashString(`${b.id}bub${k}`);
+                  const bx = r.x + r.w * (0.12 + (hb % 72) / 100);
+                  const by = y + r.h * (0.22 + ((hb >> 6) % 64) / 100);
+                  const br = 1.2 + ((hb >> 12) % 26) / 10;
+                  return (
+                    <Circle
+                      key={`bub${k}`}
+                      cx={bx}
+                      cy={by}
+                      r={br}
+                      color="#FFFFFF"
+                      opacity={0.22 + ((hb >> 18) % 14) / 100}
+                    />
+                  );
+                })}
                 {/* T2: crack systems, one per received hit — deeper hits crack harder */}
                 {b.cracks.map((c, ci) =>
                   crackPaths(c, r.w, r.h).map((d, pi) => (
@@ -478,7 +662,7 @@ export function GameCanvas({
                     </React.Fragment>
                   )),
                 )}
-              </React.Fragment>
+              </Group>
             );
           })}
 

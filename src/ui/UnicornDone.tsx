@@ -7,6 +7,7 @@ import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { UI } from '@/i18n/ui';
 import { Locale } from '@/i18n/moments';
+import { UnicornBadge } from '@/render/Unicorn';
 import { colors } from '@/theme/colors';
 
 interface Props {
@@ -17,6 +18,10 @@ interface Props {
 
 export function UnicornDone({ locale, broken, onClose }: Props) {
   const t = UI[locale];
+  // pick one celebration variant per completion, stable across re-renders
+  const variant = useRef(
+    t.doneVariants[Math.floor(Math.random() * t.doneVariants.length)],
+  ).current;
   const fade = useRef(new Animated.Value(0)).current;
   const bounce = useRef(new Animated.Value(0)).current;
 
@@ -36,11 +41,11 @@ export function UnicornDone({ locale, broken, onClose }: Props) {
   return (
     <Animated.View style={[styles.backdrop, { opacity: fade }]}>
       <View style={styles.card}>
-        <Animated.Text style={[styles.unicorn, { transform: [{ translateY: float }] }]}>
-          🦄
-        </Animated.Text>
-        <Text style={styles.title}>{t.doneTitle}</Text>
-        <Text style={styles.text}>{t.doneText}</Text>
+        <Animated.View style={[styles.unicorn, { transform: [{ translateY: float }] }]}>
+          <UnicornBadge size={150} />
+        </Animated.View>
+        <Text style={styles.title}>{variant.title}</Text>
+        <Text style={styles.text}>{variant.text}</Text>
         <Text style={styles.stat}>{t.blocksBroken(broken)}</Text>
         <Pressable style={styles.button} onPress={onClose}>
           <Text style={styles.buttonText}>{t.doneButton}</Text>
@@ -59,7 +64,7 @@ const styles = StyleSheet.create({
     zIndex: 30,
   },
   card: { alignItems: 'center', paddingHorizontal: 32 },
-  unicorn: { fontSize: 96, marginBottom: 12 },
+  unicorn: { marginBottom: 12 },
   title: { fontSize: 26, fontWeight: '700', color: colors.textPrimary, textAlign: 'center' },
   text: {
     fontSize: 17,
