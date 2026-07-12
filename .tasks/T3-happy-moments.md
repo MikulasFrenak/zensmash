@@ -2,6 +2,8 @@
 
 **Outcome:** Evolved beyond the original plan — every break rewards: hidden emoji prize (~1 in 6) or a phrase riding a flying cloud (not a popup). Native pools of 23–27 lines × 8 languages in `src/i18n/moments.ts`. Language switch lives in the 🌿 menu.
 
+**Follow-up polish:** `pickLine` now avoids repeats across a window of the last `NO_REPEAT_WINDOW` (5) lines shown, not just the immediately preceding one, falling back to the full pool if the window would block every candidate. Phrase pools and the session/results UI copy (`src/i18n/ui.ts`) got a tone pass across all 8 locales. `FloatingMoment`'s cloud puffs dropped their per-circle shadows so overlapping circles read as one cloud instead of a stack of discs.
+
 ---
 
 **Goal:** After breaking a block, occasionally delight the player with a short funny/positive line. Leave happier than you came.
