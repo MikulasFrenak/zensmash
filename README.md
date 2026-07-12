@@ -64,4 +64,8 @@ assets/sounds/  synthesized WAVs (crack, shatter1-6, hello, prize, bloom)
 
 **MVP feature-complete** — core loop, session arc, rewards, ambience, sound, 8 languages, settings, treasures. Verified on a real iPhone via Expo Go.
 
-App icon + store assets (S9) done. Next (Epic 3): persistence (AsyncStorage), hosted privacy policy, Google Play closed test (12 testers × 14 days), store submission. See the plan.
+- **Web** — released, live at [zensmash.mikulas-frenak.workers.dev](https://zensmash.mikulas-frenak.workers.dev), auto-deploys on push to `main`.
+- **iOS (App Store)** — in progress. App icon + store assets (S9) done; hosted privacy policy + submission still open.
+- **Android (Google Play)** — in progress. Needs a 12-tester, 14-day closed test before production access.
+
+Also open: persistence (AsyncStorage for settings & treasures). See the plan for details.
