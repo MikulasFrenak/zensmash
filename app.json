@@ -34,7 +34,7 @@
       "favicon": "./assets/icon.png"
     },
     "experiments": {
-      "baseUrl": "/zensmash"
+      "baseUrl": ""
     },
     "plugins": [
       "expo-audio"
