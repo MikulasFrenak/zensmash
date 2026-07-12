@@ -37,3 +37,9 @@ yarn-error.*
 
 # task files in progress (playbook)
 .tasks/*.local.md
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+!.env.example
