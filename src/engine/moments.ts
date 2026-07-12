@@ -11,15 +11,26 @@ export function shouldShowMoment(breakCount: number, rand: () => number = Math.r
   return rand() < RANDOM_CHANCE;
 }
 
-/** Pick a line from the pool, avoiding immediate repetition. */
+/** A line may repeat only after at least this many other lines were shown. */
+export const NO_REPEAT_WINDOW = 5;
+
+/**
+ * Pick a line from the pool, excluding the most recently shown ones
+ * (`recent` = indices, newest last). Falls back to the full pool if
+ * the window would exclude everything.
+ */
 export function pickLine(
   pool: readonly string[],
   rand: () => number = Math.random,
-  lastIndex = -1,
+  recent: readonly number[] = [],
 ): { text: string; index: number } {
   if (pool.length === 0) return { text: '', index: -1 };
-  if (pool.length === 1) return { text: pool[0], index: 0 };
-  let index = Math.floor(rand() * pool.length);
-  if (index === lastIndex) index = (index + 1) % pool.length;
+  const blocked = new Set(recent.slice(-NO_REPEAT_WINDOW));
+  const candidates: number[] = [];
+  for (let i = 0; i < pool.length; i++) {
+    if (!blocked.has(i)) candidates.push(i);
+  }
+  const pickFrom = candidates.length > 0 ? candidates : [...pool.keys()];
+  const index = pickFrom[Math.floor(rand() * pickFrom.length)];
   return { text: pool[index], index };
 }

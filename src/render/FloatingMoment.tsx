@@ -77,14 +77,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     zIndex: 20,
   },
+  // no per-puff shadows — overlapping circles must melt into ONE cloud
   puff: {
     position: 'absolute',
     backgroundColor: colors.surface,
-    shadowColor: colors.forest,
-    shadowOpacity: 0.12,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 3,
   },
   textBox: {
     maxWidth: 210,

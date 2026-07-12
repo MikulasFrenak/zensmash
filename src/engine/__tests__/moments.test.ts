@@ -16,10 +16,19 @@ describe('moments engine', () => {
     expect(shouldShowMoment(3, () => 0.99)).toBe(false);
   });
 
-  it('picks a line and avoids immediate repeats', () => {
-    const pool = ['a', 'b', 'c'];
-    const { index } = pickLine(pool, () => 0, 0); // would pick 0, was 0 → shifts
-    expect(index).toBe(1);
+  it('never picks a line shown within the no-repeat window', () => {
+    const pool = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+    const recent = [0, 1, 2];
+    for (let i = 0; i < 50; i++) {
+      const { index } = pickLine(pool, Math.random, recent);
+      expect(recent).not.toContain(index);
+    }
+  });
+
+  it('falls back to the full pool when everything is blocked', () => {
+    const pool = ['a', 'b'];
+    const { index } = pickLine(pool, () => 0, [0, 1, 0, 1, 0]);
+    expect(index).toBeGreaterThanOrEqual(0);
   });
 
   it('handles empty and single pools', () => {

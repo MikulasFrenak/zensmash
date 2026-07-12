@@ -103,7 +103,7 @@ export function GameCanvas({
   const [finale, setFinale] = useState(false);
   const [dropStart, setDropStart] = useState(() => Date.now());
   const [, forceFrame] = useState(0);
-  const lastLineIndex = useRef(-1);
+  const recentLines = useRef<number[]>([]);
   const lastHit = useRef<{ id: string; time: number } | null>(null);
 
   // Ambient sky: gentle 20fps tick so sun and clouds levitate softly
@@ -225,8 +225,8 @@ export function GameCanvas({
   const showMoment = useCallback(
     (cx: number, cy: number) => {
       if (moment) return;
-      const picked = pickLine(MOMENTS[locale], Math.random, lastLineIndex.current);
-      lastLineIndex.current = picked.index;
+      const picked = pickLine(MOMENTS[locale], Math.random, recentLines.current);
+      recentLines.current = [...recentLines.current, picked.index].slice(-8);
       setMoment({ key: Date.now(), text: picked.text, x: cx, y: cy });
     },
     [locale, moment],
