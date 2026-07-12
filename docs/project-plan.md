@@ -9,7 +9,7 @@ Structured per the [ai-delivery-playbook](https://github.com/MikulasFrenak/ai-de
 > with charge sparks, living sky (levitating sun, random clouds, gentle rain), blooming footer
 > meadow, fireflies, waving animal visitors with a synthesized voice, 6 shatter melodies + voices,
 > phrases and full UI in 8 languages (EN/SK/CZ/HU/PL/DE/FR/ES), squash-and-stretch game feel.
-> S9 (icons + EAS config + store docs) is done. Remaining for stores: S10/S11 below, persistence (AsyncStorage for settings & treasures), and a web/iframe build for portfolio embedding (in progress — CanvasKit-on-web wiring in `index.ts`, `app.json` `web.output: "single"`).
+> S9 (icons + EAS config + store docs) is done. Web build is also done and live at [zensmash.mikulas-frenak.workers.dev](https://zensmash.mikulas-frenak.workers.dev), deployed as its own Cloudflare Worker, embedded on the portfolio site's case study. Repo is now public. Remaining for stores: S10/S11 below, persistence (AsyncStorage for settings & treasures).
 
 ---
 

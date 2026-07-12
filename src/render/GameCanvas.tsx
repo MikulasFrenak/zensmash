@@ -2,7 +2,7 @@
  * S1–S3 + T1 (3D depth) + T2 (procedural cracks) + T3 (happy moments).
  */
 import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { Text, View, useWindowDimensions } from 'react-native';
+import { Platform, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import {
   BlurMask,
   Canvas,
@@ -411,7 +411,15 @@ export function GameCanvas({
         );
       })}
       <GestureDetector gesture={tap}>
-        <Canvas style={{ flex: 1, backgroundColor: 'transparent' }}>
+        <Canvas
+          style={StyleSheet.flatten([
+            { flex: 1, backgroundColor: 'transparent' },
+            // RN's CursorValue type only lists 'auto' | 'pointer', but
+            // react-native-web accepts the full CSS cursor value set at
+            // runtime — cast needed since the type defs haven't caught up.
+            Platform.select({ web: { cursor: 'grab' }, default: {} }) as object,
+          ])}
+        >
           {/* Background rainbow — deepest layer of the sky */}
           {rainbowArcs.map((arc, i) => (
             <Path
