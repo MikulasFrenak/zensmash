@@ -2,22 +2,30 @@
   "expo": {
     "name": "ZenSmash",
     "slug": "zensmash",
-    "version": "0.1.0",
+    "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
     "backgroundColor": "#F6FBF7",
+    "icon": "./assets/icon.png",
     "splash": {
+      "image": "./assets/splash-icon.png",
       "backgroundColor": "#F6FBF7",
       "resizeMode": "contain"
     },
     "ios": {
       "bundleIdentifier": "com.mikulasfrenak.zensmash",
-      "supportsTablet": true
+      "buildNumber": "1",
+      "supportsTablet": true,
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "package": "com.mikulasfrenak.zensmash",
+      "versionCode": 1,
       "adaptiveIcon": {
-        "backgroundColor": "#A7D7B8"
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#F6FBF7"
       }
     },
     "plugins": [
