@@ -1,10 +1,13 @@
 import {
   createGrid,
   hitBlock,
+  isFocusedHit,
   refillIfEmpty,
   GRID_COLS,
   GRID_ROWS,
   TAPS_TO_BREAK,
+  FOCUS_WINDOW_MS,
+  FOCUS_PROXIMITY,
 } from '../blocks';
 
 describe('blocks engine', () => {
@@ -44,5 +47,50 @@ describe('blocks engine', () => {
     expect(refillIfEmpty([])).toHaveLength(GRID_COLS * GRID_ROWS);
     const grid = createGrid();
     expect(refillIfEmpty(grid)).toBe(grid);
+  });
+
+  it('applies a custom damage amount, e.g. a focused-hit bonus', () => {
+    const grid = createGrid();
+    const { blocks } = hitBlock(grid, grid[0].id, undefined, 2);
+    expect(blocks.find((b) => b.id === grid[0].id)?.damage).toBe(2);
+  });
+
+  it('destroys early when a bonus hit pushes damage past TAPS_TO_BREAK', () => {
+    let grid = createGrid();
+    const id = grid[0].id;
+    const r1 = hitBlock(grid, id); // damage 1
+    grid = r1.blocks;
+    const r2 = hitBlock(grid, id, undefined, TAPS_TO_BREAK); // way past the threshold
+    expect(r2.destroyed).toBe(true);
+  });
+});
+
+describe('isFocusedHit', () => {
+  const rel = { x: 0.5, y: 0.5 };
+
+  it('is false with no previous hit', () => {
+    expect(isFocusedHit(null, 'b1', rel, 1000)).toBe(false);
+  });
+
+  it('is false on a different block', () => {
+    const prev = { id: 'b1', time: 1000, rel };
+    expect(isFocusedHit(prev, 'b2', rel, 1100)).toBe(false);
+  });
+
+  it('is false outside the time window', () => {
+    const prev = { id: 'b1', time: 1000, rel };
+    expect(isFocusedHit(prev, 'b1', rel, 1000 + FOCUS_WINDOW_MS + 1)).toBe(false);
+  });
+
+  it('is false outside the proximity radius', () => {
+    const prev = { id: 'b1', time: 1000, rel };
+    const far = { x: rel.x + FOCUS_PROXIMITY + 0.05, y: rel.y };
+    expect(isFocusedHit(prev, 'b1', far, 1100)).toBe(false);
+  });
+
+  it('is true for a soon, nearby repeat tap on the same block', () => {
+    const prev = { id: 'b1', time: 1000, rel };
+    const near = { x: rel.x + 0.05, y: rel.y - 0.05 };
+    expect(isFocusedHit(prev, 'b1', near, 1000 + FOCUS_WINDOW_MS - 10)).toBe(true);
   });
 });
