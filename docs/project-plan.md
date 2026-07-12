@@ -9,7 +9,7 @@ Structured per the [ai-delivery-playbook](https://github.com/MikulasFrenak/ai-de
 > with charge sparks, living sky (levitating sun, random clouds, gentle rain), blooming footer
 > meadow, fireflies, waving animal visitors with a synthesized voice, 6 shatter melodies + voices,
 > phrases and full UI in 8 languages (EN/SK/CZ/HU/PL/DE/FR/ES), squash-and-stretch game feel.
-> S9 (icons + EAS config + store docs) is done. Web build is also done and live at [zensmash.mikulas-frenak.workers.dev](https://zensmash.mikulas-frenak.workers.dev), deployed as its own Cloudflare Worker, embedded on the portfolio site's case study. Repo is now public. Remaining for stores: S10/S11 below, persistence (AsyncStorage for settings & treasures).
+> **Release status:** Web — **released**, live at [zensmash.mikulas-frenak.workers.dev](https://zensmash.mikulas-frenak.workers.dev) (own Cloudflare Worker, auto-deploys on push to `main`, embedded on the portfolio site's case study). App Store (iOS) — **in progress** (S9 done: icons, EAS build profiles, store docs; submission itself still open). Google Play (Android) — **in progress** (needs the closed-test cohort below before production access). Repo is now public.
 
 ---
 
@@ -154,7 +154,7 @@ Also needed: privacy policy URL (static page is fine), target Android API 35+, a
 | 1 — Core loop | 2–3 | S1–S5: smashing feels *good* on a real device | ✅ done — in day 1! |
 | 2 — Calm shell | 4 | S6–S8 + design polish pass | ✅ done — plus session arc, prizes, mandala, visitors |
 | 3 — Play closed test | 5–6 | 12+ testers, 14 days, tune feel from feedback | ⏳ next — recruit testers now |
-| 4 — Launch | 7 | S9–S10, submit both stores | ⏳ S9 done, S10 (privacy hosting) + submission left |
+| 4 — Launch | 7 | S9–S10, submit both stores + web | ⏳ Web released; iOS App Store in progress (S9 done, S10 + submission left); Android in progress (closed-test cohort needed first) |
 | 5 — v1.x | 8+ | Zen Pack IAP, new materials (ice theme is ready in git history), soundscapes | ⏳ |
 
 The 14-day Google Play test window is now the critical path — start recruiting the 12 testers immediately.
