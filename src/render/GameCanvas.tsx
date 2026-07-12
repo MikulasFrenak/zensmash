@@ -19,7 +19,9 @@ import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import {
   Block,
   createGrid,
+  FOCUS_BONUS_DAMAGE,
   hitBlock,
+  isFocusedHit,
   refillIfEmpty,
   GRID_COLS,
   GRID_ROWS,
@@ -105,7 +107,7 @@ export function GameCanvas({
   const [flowerSpecies, setFlowerSpecies] = useState(() => Math.floor(Math.random() * FLOWER_SPECIES.length));
   const [, forceFrame] = useState(0);
   const recentLines = useRef<number[]>([]);
-  const lastHit = useRef<{ id: string; time: number } | null>(null);
+  const lastHit = useRef<{ id: string; time: number; rel: { x: number; y: number } } | null>(null);
 
   // Ambient sky tick: 20fps native, halved to 10fps on web (CanvasKit's
   // JS↔WASM marshalling makes full-scene re-renders costlier there), paused
@@ -348,7 +350,9 @@ export function GameCanvas({
 
       const r = blockRect(target);
       const rel = { x: (tx - r.x) / r.w, y: (ty - r.y) / r.h };
-      const result = hitBlock(blocks, target.id, rel);
+      const now = Date.now();
+      const focused = isFocusedHit(lastHit.current, target.id, rel, now);
+      const result = hitBlock(blocks, target.id, rel, focused ? FOCUS_BONUS_DAMAGE : 1);
 
       if (result.destroyed) {
         feelShatter();
@@ -380,9 +384,10 @@ export function GameCanvas({
         onBlockBroken?.();
       } else {
         feelHit();
-        lastHit.current = { id: target.id, time: Date.now() }; // squash!
-        // chips fly out of the crack — bigger hits chip more often
-        if (getSettings().particles && Math.random() < 0.75) {
+        lastHit.current = { id: target.id, time: now, rel }; // squash!
+        // chips fly out of the crack — bigger hits chip more often, a
+        // focused hit always chips (visible "that one counted more" cue)
+        if (getSettings().particles && (focused || Math.random() < 0.75)) {
           spawnChips(tx, ty, target.colorIndex);
         }
       }

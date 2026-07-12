@@ -37,7 +37,7 @@ Per the playbook, each Story below gets `analyze-story` treatment (summary, test
 | Story | Acceptance criteria (testable) | Delivered |
 |---|---|---|
 | S1: Block field | Grid of cubes renders at 60fps on mid-range devices | ✅ 3×5 glassy squares: gradient faces, glass bubbles, organic jitter |
-| S2: Tap to crack | Tapping damages a block (visual crack states) | ✅ 5 taps to break; procedural cracks from the exact tap point, thicker per hit; subtle squash; ice chips fly |
+| S2: Tap to crack | Tapping damages a block (visual crack states) | ✅ 5 taps to break (3 if focused — fast, precise repeat taps count double); procedural cracks from the exact tap point, thicker per hit; subtle squash; ice chips fly |
 | S3: Shatter effect | Destruction spawns debris + rainbow burst | ✅ rainbow burst + charge sparks streaming into the sky rainbow |
 | S4: Haptics + sound | Hit haptic; destruction haptic + sound | ✅ `feel` API; marimba crack, 6 random music-box shatter melodies (all synthesized in-house) |
 | S5: Endless refill | New blocks drop in when field empties | ✅ staggered ease-out drop-in (also on first load); paused for the finale |
