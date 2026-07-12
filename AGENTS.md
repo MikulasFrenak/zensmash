@@ -6,7 +6,9 @@ Stress-relief mobile game: tap to break cubes, watch the world bloom, leave calm
 
 Expo SDK 54 + TypeScript (strict). Rendering: @shopify/react-native-skia. Animations: react-native-reanimated (+ react-native-worklets) and RN Animated for overlays. Input: react-native-gesture-handler. Audio: expo-audio (synthesized WAV assets in `assets/sounds/`). Haptics: expo-haptics.
 
-Web target: `app.json` sets `web.output: "single"` (a plain SPA bundle — no expo-router) so the game can be iframe-embedded on the portfolio site. `index.ts` loads Skia's CanvasKit (WASM) on `Platform.OS === 'web'` before registering the root component, since Skia needs it there but not on native.
+Web target: `app.json` sets `web.output: "single"` (a plain SPA bundle — no expo-router) so the game can be iframe-embedded on the portfolio site. `index.ts`/`index.web.ts` split the native vs web entry point (Metro's platform-extension resolution) — web loads Skia's CanvasKit (WASM, served same-origin from `public/canvaskit.wasm` — a CDN version mismatched against the bundled JS glue breaks every Skia call) before registering the root component. Deploys as its own Cloudflare Worker (`wrangler.jsonc`), auto-deploying on push to `main` via `.github/workflows/deploy.yml`.
+
+Web-only input handling in `GameCanvas.tsx`: taps go through a plain `click` DOM listener on the canvas, not `GestureDetector`/`Gesture.Tap()` (RNGH's web Tap gesture doesn't reliably recognize a MacBook trackpad's tap-to-click). A themed hammer cursor (custom SVG, positioned via direct DOM manipulation, not React state) replaces the OS cursor while hovering a cube. Native is unaffected by any of this — both are Platform-gated.
 
 ## Structure
 
@@ -16,7 +18,7 @@ Web target: `app.json` sets `web.output: "single"` (a plain SPA bundle — no ex
 - `src/i18n/` — 8 locales (en, sk, cs, hu, pl, de, fr, es): `moments.ts` (flying-cloud phrase pools, native not translated) and `ui.ts` (menu/celebration strings, celebration has 5 random variants).
 - `src/state/` — tiny `useSyncExternalStore` stores: `settings` (sound/haptics/particles), `collection` (treasures). In-memory only; AsyncStorage persistence is an open task.
 - `src/theme/` — colors. Green/white base; rainbow colors are ONLY for reward moments (rainbow arcs, bursts, charge sparks, shining mandala).
-- `src/ui/` — RN overlays: ZenMenu (🌿 stats + toggles + language), CollectionModal (🎁 treasures), UnicornDone (session results).
+- `src/ui/` — RN overlays: ZenMenu (🌿 stats + toggles + language), CollectionModal (🎁 treasures), UnicornDone (session results). `UnicornDone.tsx`/`UnicornDone.web.tsx`/`UnicornDoneCard.tsx` split the actual card content (`UnicornDoneCard`) from how it mounts: native renders it in place, web portals it to `document.body` (via `react-dom`'s `createPortal`) since a modal nested inside `GameCanvas`'s own subtree can't out-rank later App-level siblings in CSS stacking on web — see the comment on `UnicornDone.web.tsx` for the full reasoning.
 - `.tasks/` — per-ticket plan files (playbook `create-task`).
 
 ## Game design facts
@@ -37,4 +39,4 @@ Web target: `app.json` sets `web.output: "single"` (a plain SPA bundle — no ex
 
 ## Verification
 
-Automated tests cover `src/engine` and `src/state`. Game feel (haptics, audio latency, 60 fps with particles + ambient 20 fps tick) is verified on a real device via Expo Go — simulator sign-off is not sufficient. Watch battery/thermals: the ambient sky tick redraws continuously.
+Automated tests cover `src/engine` and `src/state`. Game feel (haptics, audio latency, 60 fps with particles + ambient tick) is verified on a real device via Expo Go — simulator sign-off is not sufficient. Watch battery/thermals: the ambient sky tick redraws continuously — 20fps on native, halved to 10fps on web (CanvasKit's JS↔WASM marshalling makes web re-renders meaningfully more expensive) and paused entirely via the Page Visibility API when the tab/iframe isn't visible. Note: Safari's CanvasKit/WebGL performance is inherently heavier than Chrome's — an upstream react-native-skia/Safari characteristic, not something fixable in this codebase.
