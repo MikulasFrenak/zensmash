@@ -1,11 +1,7 @@
-// Web entry point: UnicornDone is rendered inside GameCanvas, which is an
-// earlier sibling of the 🌿/🎁 buttons in App.tsx. On web, CSS z-index only
-// competes within the same stacking context, so no zIndex inside
-// GameCanvas's own subtree can paint above those later siblings — they'd
-// visually cross the finale card. Portalling straight to document.body
-// sidesteps the whole tree position and guarantees it's always on top.
-// Native doesn't have this problem (see UnicornDone.tsx), and has no DOM
-// to portal into anyway.
+// GameCanvas (which renders this) is an earlier sibling of the 🌿/🎁
+// buttons in App.tsx, and CSS z-index only competes within the same
+// stacking context — no zIndex here could paint above those buttons on
+// web. Portalling to document.body sidesteps the tree position entirely.
 import { createPortal } from 'react-dom';
 
 import { UnicornDoneCard, UnicornDoneProps } from './UnicornDoneCard';

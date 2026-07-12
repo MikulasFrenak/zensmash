@@ -106,14 +106,9 @@ export function GameCanvas({
   const recentLines = useRef<number[]>([]);
   const lastHit = useRef<{ id: string; time: number } | null>(null);
 
-  // Ambient sky: gentle tick so sun and clouds levitate softly. 20fps on
-  // native (verified smooth on a real iPhone); halved to 10fps on web,
-  // where CanvasKit's JS↔WASM marshalling makes every re-render of the
-  // whole scene graph meaningfully more expensive than native's direct
-  // calls, and slow drifting motion doesn't need the higher rate to read
-  // as smooth. Also paused entirely while the tab/iframe isn't visible
-  // (e.g. scrolled past on the portfolio page), since there's no point
-  // spending CPU animating something nobody can see.
+  // Ambient sky tick: 20fps native, halved to 10fps on web (CanvasKit's
+  // JS↔WASM marshalling makes full-scene re-renders costlier there), paused
+  // via the Page Visibility API while not visible.
   React.useEffect(() => {
     const intervalMs = Platform.OS === 'web' ? 100 : 50;
     let id: ReturnType<typeof setInterval> | null = null;
@@ -405,26 +400,18 @@ export function GameCanvas({
       Gesture.Tap()
         .runOnJS(true)
         .onEnd((e) => {
-          // Web taps go through the native 'click' listener below instead —
-          // RNGH's web Tap gesture doesn't reliably recognize a MacBook
-          // trackpad's tap-to-click the same way it does a physical click.
+          // RNGH's web Tap gesture doesn't reliably recognize a trackpad's
+          // tap-to-click — web taps go through the native 'click' listener below.
           if (Platform.OS === 'web') return;
           handleTap(e.x, e.y);
         }),
     [handleTap],
   );
 
-  // Web-only: a floating 🔨 replaces the OS cursor while hovering a cube
-  // (default arrow everywhere else), swinging down on click/press — reuses
-  // the same hit-test as handleTap so it only appears exactly where a tap
-  // would actually land. Positioned by direct DOM manipulation rather than
-  // React state, so mousemove doesn't force a re-render every pixel.
-  //
-  // Skia's <Canvas> renders a raw <canvas> via a custom native component
-  // that doesn't forward React's synthetic onMouseMove/etc props through to
-  // it (confirmed: a plain onMouseMove prop never fires, while a real
-  // addEventListener on the underlying DOM node does) — so this attaches
-  // listeners imperatively instead of relying on props.
+  // Web-only hammer cursor. Skia's <Canvas> doesn't forward React's
+  // synthetic mouse-event props to the underlying DOM node, so listeners are
+  // attached imperatively below instead, and position is set via direct DOM
+  // manipulation (not React state) to avoid a re-render per mousemove.
   const canvasWrapRef = useRef<View>(null);
   const latestRef = useRef({ blocks, blockRect, handleTap });
   latestRef.current = { blocks, blockRect, handleTap };
@@ -437,12 +424,9 @@ export function GameCanvas({
     if (!wrapEl || !canvasEl) return;
 
     const hammerEl = document.createElement('div');
-    // A small toy-mallet in the game's own sage/forest palette with the same
-    // depth treatment as the cubes (gradient face, top sheen). Head at the
-    // top (the familiar hammer silhouette — head-at-bottom read as upside
-    // down in testing), handle below. Anchored at the handle's grip end
-    // (16, 30 in the 32x32 box), roughly where the actual cursor/tap point
-    // is — left/top are set to the raw tap point on mousemove below.
+    // Toy-mallet icon in the game's own palette, same depth treatment as the
+    // cubes (gradient + sheen). left/top are set to the raw tap point on
+    // mousemove below.
     hammerEl.innerHTML = `
       <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
         <defs>
@@ -465,10 +449,7 @@ export function GameCanvas({
       lineHeight: '1',
       pointerEvents: 'none',
       opacity: '0',
-      // anchored near the head's upper-left corner (6, 8) — the cursor tip
-      // convention most pointer-style cursors use — rather than the handle
-      // grip end
-      transform: 'translate(-6px, -8px) scale(1)',
+      transform: 'translate(-6px, -8px) scale(1)', // anchored at the head's upper-left, cursor-tip style
       transformOrigin: '30% 40%',
       transition: 'transform 90ms ease-out',
       zIndex: '20',
@@ -483,11 +464,8 @@ export function GameCanvas({
     const setHammerVisible = (visible: boolean) => {
       hammerEl.style.opacity = visible ? '1' : '0';
     };
-    // A quick chop-and-compress pulse anchored at the same point: a small
-    // rotation (much smaller than a full swing, so the head barely drifts
-    // off the tap point) combined with a squash, echoing the game's own
-    // subtle squash-and-stretch block-hit feel while still reading clearly
-    // as an impact rather than a static wobble.
+    // Chop-and-compress pulse, anchored at the same point (small rotation +
+    // squash rather than a full swing, so the head doesn't drift off the tap point).
     const swing = () => {
       hammerEl.style.transform = 'translate(-6px, -5px) rotate(-18deg) scale(0.85, 1.15)';
       clearTimeout(swingTimeout);
@@ -513,15 +491,9 @@ export function GameCanvas({
       updateCursor();
     };
     const onDown = () => swing();
-    // The actual tap: a native 'click' event, not RNGH's gesture recognizer
-    // (see the comment on the `tap` gesture above for why).
     const onClick = (e: MouseEvent) => {
       latestRef.current.handleTap(e.offsetX, e.offsetY);
-      // A trackpad's tap-to-click reliably fires 'click' but not always a
-      // distinct mousedown, so swing here too — harmless if onDown already
-      // triggered it for a real physical click (swing() just re-triggers
-      // the same transition).
-      swing();
+      swing(); // re-triggers harmlessly if onDown already fired for a real mousedown
     };
 
     canvasEl.addEventListener('mousemove', onMove);
@@ -569,9 +541,7 @@ export function GameCanvas({
         <Canvas
           style={StyleSheet.flatten([
             { flex: 1, backgroundColor: 'transparent' },
-            // RN's CursorValue type only lists 'auto' | 'pointer', but
-            // react-native-web accepts the full CSS cursor value set at
-            // runtime — cast needed since the type defs haven't caught up.
+            // cast: RN's CursorValue type only lists 'auto'/'pointer', react-native-web supports more at runtime
             Platform.select({ web: { cursor: webCursor }, default: {} }) as object,
           ])}
         >
