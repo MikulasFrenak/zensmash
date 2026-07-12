@@ -58,7 +58,7 @@ assets/sounds/  synthesized WAVs (crack, shatter1-6, hello, prize, bloom)
 ## Project docs
 
 - `docs/project-plan.md` — full plan (vision, stories, architecture, store release)
-- `CLAUDE.md` — conventions, design rules, game facts
+- `AGENTS.md` — conventions, design rules, game facts (read natively by most AI coding tools; `CLAUDE.md` is a one-line import of it for Claude Code)
 
 ## Status
 
