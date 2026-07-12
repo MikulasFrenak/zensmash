@@ -27,7 +27,7 @@ import {
 } from '@/engine/blocks';
 import { crackPaths } from '@/engine/cracks';
 import { pickLine } from '@/engine/moments';
-import { hashString } from '@/engine/rng';
+import { hashString, pickDifferent } from '@/engine/rng';
 import { MOMENTS, Locale } from '@/i18n/moments';
 import { colors } from '@/theme/colors';
 import { feelBloom, feelHit, feelShatter, feelPrize } from '@/feel';
@@ -102,7 +102,7 @@ export function GameCanvas({
   const [done, setDone] = useState(false);
   const [finale, setFinale] = useState(false);
   const [dropStart, setDropStart] = useState(() => Date.now());
-  const [flowerSpecies] = useState(() => Math.floor(Math.random() * FLOWER_SPECIES.length));
+  const [flowerSpecies, setFlowerSpecies] = useState(() => Math.floor(Math.random() * FLOWER_SPECIES.length));
   const [, forceFrame] = useState(0);
   const recentLines = useRef<number[]>([]);
   const lastHit = useRef<{ id: string; time: number } | null>(null);
@@ -932,6 +932,7 @@ export function GameCanvas({
             displayedBreaks.current = 0;
             setBlocks(createGrid());
             setDropStart(Date.now());
+            setFlowerSpecies((current) => pickDifferent(FLOWER_SPECIES.length, current));
           }}
         />
       )}

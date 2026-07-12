@@ -18,3 +18,11 @@ export function hashString(s: string): number {
   }
   return h >>> 0;
 }
+
+/** Pick a random index in [0, count), never `exclude` — for "always something new" variety pickers. */
+export function pickDifferent(count: number, exclude: number, rand: () => number = Math.random): number {
+  if (count <= 1) return 0;
+  let index = Math.floor(rand() * (count - 1));
+  if (index >= exclude) index += 1;
+  return index;
+}
