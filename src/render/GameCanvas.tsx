@@ -1,8 +1,8 @@
 /**
  * S1–S3 + T1 (3D depth) + T2 (procedural cracks) + T3 (happy moments).
  */
-import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { Text, View, useWindowDimensions } from 'react-native';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Platform, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import {
   BlurMask,
   Canvas,
@@ -379,10 +379,90 @@ export function GameCanvas({
       Gesture.Tap()
         .runOnJS(true)
         .onEnd((e) => {
+          // Web taps go through the native 'click' listener below instead —
+          // RNGH's web Tap gesture doesn't reliably recognize a MacBook
+          // trackpad's tap-to-click the same way it does a physical click.
+          if (Platform.OS === 'web') return;
           handleTap(e.x, e.y);
         }),
     [handleTap],
   );
+
+  // Web-only: default arrow away from cubes, open hand hovering one, closed
+  // fist while actually pressing — reuses the same hit-test as handleTap so
+  // the cursor only changes exactly where a tap would actually land.
+  //
+  // Skia's <Canvas> renders a raw <canvas> via a custom native component
+  // that doesn't forward React's synthetic onMouseMove/etc props through to
+  // it (confirmed: a plain onMouseMove prop never fires, while a real
+  // addEventListener on the underlying DOM node does) — so this attaches
+  // listeners imperatively instead of relying on props.
+  const canvasWrapRef = useRef<View>(null);
+  const latestRef = useRef({ blocks, blockRect, handleTap });
+  latestRef.current = { blocks, blockRect, handleTap };
+  const [webCursor, setWebCursor] = useState<'default' | 'grab' | 'grabbing'>('default');
+
+  useEffect(() => {
+    if (Platform.OS !== 'web') return;
+    const wrapEl = canvasWrapRef.current as unknown as HTMLElement | null;
+    const canvasEl = wrapEl?.querySelector?.('canvas');
+    if (!canvasEl) return;
+
+    let hovered = false;
+    let pressed = false;
+    const updateCursor = () => setWebCursor(!hovered ? 'default' : pressed ? 'grabbing' : 'grab');
+
+    const onMove = (e: MouseEvent) => {
+      const { blocks: bs, blockRect: rectOf } = latestRef.current;
+      hovered = bs.some((b) => {
+        const r = rectOf(b);
+        return e.offsetX >= r.x && e.offsetX <= r.x + r.w && e.offsetY >= r.y && e.offsetY <= r.y + r.h;
+      });
+      updateCursor();
+    };
+    const onLeave = () => {
+      hovered = false;
+      pressed = false;
+      updateCursor();
+    };
+    const onDown = () => {
+      pressed = true;
+      updateCursor();
+    };
+    const onUp = () => {
+      pressed = false;
+      updateCursor();
+    };
+    // The actual tap: a native 'click' event, not RNGH's gesture recognizer
+    // (see the comment on the `tap` gesture above for why).
+    const onClick = (e: MouseEvent) => {
+      latestRef.current.handleTap(e.offsetX, e.offsetY);
+      // A trackpad's tap-to-click reliably fires 'click' but not always a
+      // distinct mousedown/mouseup pair, so the press-driven grab→grabbing
+      // toggle above never visibly flashes for it. Flash it here instead,
+      // timed rather than press-driven — harmless no-op alongside the real
+      // mousedown/mouseup handlers for an actual physical click.
+      pressed = true;
+      updateCursor();
+      setTimeout(() => {
+        pressed = false;
+        updateCursor();
+      }, 120);
+    };
+
+    canvasEl.addEventListener('mousemove', onMove);
+    canvasEl.addEventListener('mouseleave', onLeave);
+    canvasEl.addEventListener('mousedown', onDown);
+    canvasEl.addEventListener('mouseup', onUp);
+    canvasEl.addEventListener('click', onClick);
+    return () => {
+      canvasEl.removeEventListener('mousemove', onMove);
+      canvasEl.removeEventListener('mouseleave', onLeave);
+      canvasEl.removeEventListener('mousedown', onDown);
+      canvasEl.removeEventListener('click', onClick);
+      canvasEl.removeEventListener('mouseup', onUp);
+    };
+  }, []);
 
   const now = Date.now();
 
@@ -410,8 +490,17 @@ export function GameCanvas({
           </Text>
         );
       })}
+      <View ref={canvasWrapRef} style={{ flex: 1 }}>
       <GestureDetector gesture={tap}>
-        <Canvas style={{ flex: 1, backgroundColor: 'transparent' }}>
+        <Canvas
+          style={StyleSheet.flatten([
+            { flex: 1, backgroundColor: 'transparent' },
+            // RN's CursorValue type only lists 'auto' | 'pointer', but
+            // react-native-web accepts the full CSS cursor value set at
+            // runtime — cast needed since the type defs haven't caught up.
+            Platform.select({ web: { cursor: webCursor }, default: {} }) as object,
+          ])}
+        >
           {/* Background rainbow — deepest layer of the sky */}
           {rainbowArcs.map((arc, i) => (
             <Path
@@ -760,6 +849,7 @@ export function GameCanvas({
           })}
         </Canvas>
       </GestureDetector>
+      </View>
 
       {/* freed prizes */}
       {prizes.map((p) => (
