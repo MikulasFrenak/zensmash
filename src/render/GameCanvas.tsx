@@ -596,7 +596,7 @@ export function GameCanvas({
             <Lotus
               cx={width / 2}
               cy={fieldTop + ((blockH + GAP) * GRID_ROWS) / 2}
-              size={width * 1.15}
+              size={(blockW * GRID_COLS + GAP * (GRID_COLS - 1)) * 1.15}
               progress={progress}
               now={now}
               opacity={finale ? 0.95 : 0.55}
