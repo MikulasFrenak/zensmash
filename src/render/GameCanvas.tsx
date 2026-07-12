@@ -106,10 +106,36 @@ export function GameCanvas({
   const recentLines = useRef<number[]>([]);
   const lastHit = useRef<{ id: string; time: number } | null>(null);
 
-  // Ambient sky: gentle 20fps tick so sun and clouds levitate softly
+  // Ambient sky: gentle tick so sun and clouds levitate softly. 20fps on
+  // native (verified smooth on a real iPhone); halved to 10fps on web,
+  // where CanvasKit's JS↔WASM marshalling makes every re-render of the
+  // whole scene graph meaningfully more expensive than native's direct
+  // calls, and slow drifting motion doesn't need the higher rate to read
+  // as smooth. Also paused entirely while the tab/iframe isn't visible
+  // (e.g. scrolled past on the portfolio page), since there's no point
+  // spending CPU animating something nobody can see.
   React.useEffect(() => {
-    const id = setInterval(() => forceFrame((f) => f + 1), 50);
-    return () => clearInterval(id);
+    const intervalMs = Platform.OS === 'web' ? 100 : 50;
+    let id: ReturnType<typeof setInterval> | null = null;
+    const start = () => {
+      if (id === null) id = setInterval(() => forceFrame((f) => f + 1), intervalMs);
+    };
+    const stop = () => {
+      if (id !== null) {
+        clearInterval(id);
+        id = null;
+      }
+    };
+    start();
+    if (Platform.OS === 'web') {
+      const onVisibility = () => (document.hidden ? stop() : start());
+      document.addEventListener('visibilitychange', onVisibility);
+      return () => {
+        document.removeEventListener('visibilitychange', onVisibility);
+        stop();
+      };
+    }
+    return stop;
   }, []);
 
   // S5: drive re-renders while blocks are dropping in (mount + every refill)
@@ -388,9 +414,11 @@ export function GameCanvas({
     [handleTap],
   );
 
-  // Web-only: default arrow away from cubes, open hand hovering one, closed
-  // fist while actually pressing — reuses the same hit-test as handleTap so
-  // the cursor only changes exactly where a tap would actually land.
+  // Web-only: a floating 🔨 replaces the OS cursor while hovering a cube
+  // (default arrow everywhere else), swinging down on click/press — reuses
+  // the same hit-test as handleTap so it only appears exactly where a tap
+  // would actually land. Positioned by direct DOM manipulation rather than
+  // React state, so mousemove doesn't force a re-render every pixel.
   //
   // Skia's <Canvas> renders a raw <canvas> via a custom native component
   // that doesn't forward React's synthetic onMouseMove/etc props through to
@@ -400,67 +428,113 @@ export function GameCanvas({
   const canvasWrapRef = useRef<View>(null);
   const latestRef = useRef({ blocks, blockRect, handleTap });
   latestRef.current = { blocks, blockRect, handleTap };
-  const [webCursor, setWebCursor] = useState<'default' | 'grab' | 'grabbing'>('default');
+  const [webCursor, setWebCursor] = useState<'default' | 'none'>('default');
 
   useEffect(() => {
     if (Platform.OS !== 'web') return;
     const wrapEl = canvasWrapRef.current as unknown as HTMLElement | null;
     const canvasEl = wrapEl?.querySelector?.('canvas');
-    if (!canvasEl) return;
+    if (!wrapEl || !canvasEl) return;
+
+    const hammerEl = document.createElement('div');
+    // A small toy-mallet in the game's own sage/forest palette with the same
+    // depth treatment as the cubes (gradient face, top sheen). Head at the
+    // top (the familiar hammer silhouette — head-at-bottom read as upside
+    // down in testing), handle below. Anchored at the handle's grip end
+    // (16, 30 in the 32x32 box), roughly where the actual cursor/tap point
+    // is — left/top are set to the raw tap point on mousemove below.
+    hammerEl.innerHTML = `
+      <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="hammerHead" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="${colors.blockFaceTops[0]}" />
+            <stop offset="1" stop-color="${colors.blockFaces[0]}" />
+          </linearGradient>
+          <linearGradient id="hammerHandle" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="${colors.forest}" />
+            <stop offset="1" stop-color="${colors.blockSides[0]}" />
+          </linearGradient>
+        </defs>
+        <rect x="14" y="17" width="4" height="13" rx="2" fill="url(#hammerHandle)" />
+        <rect x="4" y="6" width="24" height="12" rx="5" fill="url(#hammerHead)" stroke="${colors.forest}" stroke-width="1.5" />
+        <rect x="7" y="8" width="17" height="3.5" rx="1.75" fill="#FFFFFF" opacity="0.45" />
+      </svg>
+    `;
+    Object.assign(hammerEl.style, {
+      position: 'absolute',
+      lineHeight: '1',
+      pointerEvents: 'none',
+      opacity: '0',
+      // anchored near the head's upper-left corner (6, 8) — the cursor tip
+      // convention most pointer-style cursors use — rather than the handle
+      // grip end
+      transform: 'translate(-6px, -8px) scale(1)',
+      transformOrigin: '30% 40%',
+      transition: 'transform 90ms ease-out',
+      zIndex: '20',
+      userSelect: 'none',
+    } satisfies Partial<CSSStyleDeclaration>);
+    wrapEl.style.position = 'relative';
+    wrapEl.appendChild(hammerEl);
 
     let hovered = false;
-    let pressed = false;
-    const updateCursor = () => setWebCursor(!hovered ? 'default' : pressed ? 'grabbing' : 'grab');
+    let swingTimeout: ReturnType<typeof setTimeout> | undefined;
+    const updateCursor = () => setWebCursor(hovered ? 'none' : 'default');
+    const setHammerVisible = (visible: boolean) => {
+      hammerEl.style.opacity = visible ? '1' : '0';
+    };
+    // A quick chop-and-compress pulse anchored at the same point: a small
+    // rotation (much smaller than a full swing, so the head barely drifts
+    // off the tap point) combined with a squash, echoing the game's own
+    // subtle squash-and-stretch block-hit feel while still reading clearly
+    // as an impact rather than a static wobble.
+    const swing = () => {
+      hammerEl.style.transform = 'translate(-6px, -5px) rotate(-18deg) scale(0.85, 1.15)';
+      clearTimeout(swingTimeout);
+      swingTimeout = setTimeout(() => {
+        hammerEl.style.transform = 'translate(-6px, -8px) rotate(0deg) scale(1)';
+      }, 110);
+    };
 
     const onMove = (e: MouseEvent) => {
+      hammerEl.style.left = `${e.offsetX}px`;
+      hammerEl.style.top = `${e.offsetY}px`;
       const { blocks: bs, blockRect: rectOf } = latestRef.current;
       hovered = bs.some((b) => {
         const r = rectOf(b);
         return e.offsetX >= r.x && e.offsetX <= r.x + r.w && e.offsetY >= r.y && e.offsetY <= r.y + r.h;
       });
+      setHammerVisible(hovered);
       updateCursor();
     };
     const onLeave = () => {
       hovered = false;
-      pressed = false;
+      setHammerVisible(false);
       updateCursor();
     };
-    const onDown = () => {
-      pressed = true;
-      updateCursor();
-    };
-    const onUp = () => {
-      pressed = false;
-      updateCursor();
-    };
+    const onDown = () => swing();
     // The actual tap: a native 'click' event, not RNGH's gesture recognizer
     // (see the comment on the `tap` gesture above for why).
     const onClick = (e: MouseEvent) => {
       latestRef.current.handleTap(e.offsetX, e.offsetY);
       // A trackpad's tap-to-click reliably fires 'click' but not always a
-      // distinct mousedown/mouseup pair, so the press-driven grab→grabbing
-      // toggle above never visibly flashes for it. Flash it here instead,
-      // timed rather than press-driven — harmless no-op alongside the real
-      // mousedown/mouseup handlers for an actual physical click.
-      pressed = true;
-      updateCursor();
-      setTimeout(() => {
-        pressed = false;
-        updateCursor();
-      }, 120);
+      // distinct mousedown, so swing here too — harmless if onDown already
+      // triggered it for a real physical click (swing() just re-triggers
+      // the same transition).
+      swing();
     };
 
     canvasEl.addEventListener('mousemove', onMove);
     canvasEl.addEventListener('mouseleave', onLeave);
     canvasEl.addEventListener('mousedown', onDown);
-    canvasEl.addEventListener('mouseup', onUp);
     canvasEl.addEventListener('click', onClick);
     return () => {
       canvasEl.removeEventListener('mousemove', onMove);
       canvasEl.removeEventListener('mouseleave', onLeave);
       canvasEl.removeEventListener('mousedown', onDown);
       canvasEl.removeEventListener('click', onClick);
-      canvasEl.removeEventListener('mouseup', onUp);
+      clearTimeout(swingTimeout);
+      hammerEl.remove();
     };
   }, []);
 
