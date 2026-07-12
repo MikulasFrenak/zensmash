@@ -6,8 +6,12 @@ import { registerRootComponent } from 'expo';
 import { LoadSkiaWeb } from '@shopify/react-native-skia/lib/module/web';
 
 LoadSkiaWeb({
-  locateFile: (file: string) =>
-    `https://cdn.jsdelivr.net/npm/canvaskit-wasm@0.39.1/bin/full/${file}`,
+  // Serve the .wasm from same-origin public/ (copied verbatim into dist/ on
+  // export) instead of a CDN pinned to a canvaskit-wasm version that doesn't
+  // match the JS glue code bundled from node_modules — a version mismatch
+  // there breaks every CanvasKit call at runtime (e.g. "Cannot read
+  // properties of undefined (reading 'PictureRecorder')").
+  locateFile: (file: string) => `/${file}`,
 }).then(() => {
   const App = require('./App').default;
   registerRootComponent(App);
