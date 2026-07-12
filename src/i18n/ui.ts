@@ -81,7 +81,7 @@ export const UI: Record<Locale, UiStrings> = {
       },
       {
         title: 'Všetko rozbité, všade pokoj 🌿',
-        text: 'Program dňa: úsmev, pohoda, bodka. A za dezert ešte jedna bodka. 😄',
+        text: 'Program dňa: úsmev, pohoda, bodka. A ako dezert ešte jedna bodka. 😄',
       },
       {
         title: 'Stres opustil skupinu 👋',

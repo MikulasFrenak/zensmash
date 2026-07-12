@@ -6,6 +6,8 @@ Stress-relief mobile game: tap to break cubes, watch the world bloom, leave calm
 
 Expo SDK 54 + TypeScript (strict). Rendering: @shopify/react-native-skia. Animations: react-native-reanimated (+ react-native-worklets) and RN Animated for overlays. Input: react-native-gesture-handler. Audio: expo-audio (synthesized WAV assets in `assets/sounds/`). Haptics: expo-haptics.
 
+Web target: `app.json` sets `web.output: "single"` (a plain SPA bundle — no expo-router) so the game can be iframe-embedded on the portfolio site. `index.ts` loads Skia's CanvasKit (WASM) on `Platform.OS === 'web'` before registering the root component, since Skia needs it there but not on native.
+
 ## Structure
 
 - `src/engine/` — pure game logic, no React/rendering imports (blocks, cracks, moments, rng). Everything here must be unit-tested.

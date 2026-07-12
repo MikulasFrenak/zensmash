@@ -74,9 +74,9 @@ export const MOMENTS: Record<Locale, readonly string[]> = {
     'O kúsok pokojnejší. 🧘',
     'To bolo ono.',
     'Obláčik to schvaľuje. ☁️',
-    'Majstrovský zásah! 🏅',
+    'Majstrovský crash! 🏅',
     'Usmej sa, ide ti to. 🌿',
-    'Neber kocky vážne. Ony teba tiež nie.',
+    'Neber kocky vážne... Ony teba tiež.',
   ],
   cs: [
     'Kostička to nedala.',

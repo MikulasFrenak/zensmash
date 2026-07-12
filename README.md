@@ -64,4 +64,4 @@ assets/sounds/  synthesized WAVs (crack, shatter1-6, hello, prize, bloom)
 
 **MVP feature-complete** — core loop, session arc, rewards, ambience, sound, 8 languages, settings, treasures. Verified on a real iPhone via Expo Go.
 
-Next (Epic 3): persistence (AsyncStorage), app icon + store assets, privacy policy, Google Play closed test (12 testers × 14 days), store submission. See the plan.
+App icon + store assets (S9) done. Next (Epic 3): persistence (AsyncStorage), hosted privacy policy, Google Play closed test (12 testers × 14 days), store submission. See the plan.

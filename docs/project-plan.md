@@ -9,7 +9,7 @@ Structured per the [ai-delivery-playbook](https://github.com/MikulasFrenak/ai-de
 > with charge sparks, living sky (levitating sun, random clouds, gentle rain), blooming footer
 > meadow, fireflies, waving animal visitors with a synthesized voice, 6 shatter melodies + voices,
 > phrases and full UI in 8 languages (EN/SK/CZ/HU/PL/DE/FR/ES), squash-and-stretch game feel.
-> Remaining for stores: Epic 3 below + persistence (AsyncStorage for settings & treasures).
+> S9 (icons + EAS config + store docs) is done. Remaining for stores: S10/S11 below, persistence (AsyncStorage for settings & treasures), and a web/iframe build for portfolio embedding (in progress — CanvasKit-on-web wiring in `index.ts`, `app.json` `web.output: "single"`).
 
 ---
 
@@ -54,11 +54,11 @@ Per the playbook, each Story below gets `analyze-story` treatment (summary, test
 
 ### Epic 3 — Release readiness
 
-| Story | Acceptance criteria |
-|---|---|
-| S9: App icon + store assets | Icon, screenshots, store descriptions in EN (+CZ/SK?) |
-| S10: Privacy & compliance | Privacy policy URL, Play Data Safety form, App Store privacy labels — accurate (top rejection reason in 2026) |
-| S11: Monetization v1 | See §6 |
+| Story | Acceptance criteria | Delivered |
+|---|---|---|
+| S9: App icon + store assets | Icon, screenshots, store descriptions in EN (+CZ/SK?) | ✅ app/adaptive icons + splash wired in `app.json`, EAS build/submit config (`eas.json`), store listing + release checklist in `docs/store/` |
+| S10: Privacy & compliance | Privacy policy URL, Play Data Safety form, App Store privacy labels — accurate (top rejection reason in 2026) | ⏳ `docs/store/privacy-policy.md` drafted, not yet hosted at a public URL |
+| S11: Monetization v1 | See §6 | ⏳ |
 
 **Explicit non-goals for MVP:** accounts, multiplayer, levels, achievements, cloud save, ads in v1.
 
@@ -154,7 +154,7 @@ Also needed: privacy policy URL (static page is fine), target Android API 35+, a
 | 1 — Core loop | 2–3 | S1–S5: smashing feels *good* on a real device | ✅ done — in day 1! |
 | 2 — Calm shell | 4 | S6–S8 + design polish pass | ✅ done — plus session arc, prizes, mandala, visitors |
 | 3 — Play closed test | 5–6 | 12+ testers, 14 days, tune feel from feedback | ⏳ next — recruit testers now |
-| 4 — Launch | 7 | S9–S10, submit both stores | ⏳ |
+| 4 — Launch | 7 | S9–S10, submit both stores | ⏳ S9 done, S10 (privacy hosting) + submission left |
 | 5 — v1.x | 8+ | Zen Pack IAP, new materials (ice theme is ready in git history), soundscapes | ⏳ |
 
 The 14-day Google Play test window is now the critical path — start recruiting the 12 testers immediately.
