@@ -19,18 +19,79 @@ interface Props {
   opacity?: number;
   /** finale: full vivid rainbow colors + golden shine */
   shine?: boolean;
+  /** which flower species to render — pick once per session, see FLOWER_SPECIES */
+  species?: number;
 }
 
-const OUTER = 10;
-const INNER = 8;
-const PETAL_PASTELS = ['#CDEBD8', '#FFE3EC', '#D9F2E6', '#FFF3D6'];
+interface FlowerSpecies {
+  name: string;
+  outerCount: number;
+  innerCount: number;
+  outerPetal: [length: number, width: number];
+  innerPetal: [length: number, width: number];
+  /** 4 soft pastel tones, same lightness/softness family as the game's calm palette */
+  palette: [string, string, string, string];
+}
+
+export const FLOWER_SPECIES: FlowerSpecies[] = [
+  {
+    name: 'Mint Bloom',
+    outerCount: 10,
+    innerCount: 8,
+    outerPetal: [46, 13],
+    innerPetal: [30, 10],
+    palette: ['#CDEBD8', '#FFE3EC', '#D9F2E6', '#FFF3D6'],
+  },
+  {
+    name: 'Lavender Dream',
+    outerCount: 8,
+    innerCount: 6,
+    outerPetal: [40, 18],
+    innerPetal: [26, 14],
+    palette: ['#E5D9F2', '#FFF3D6', '#D9F2E6', '#D6EAF8'],
+  },
+  {
+    name: 'Peach Sunset',
+    outerCount: 12,
+    innerCount: 10,
+    outerPetal: [50, 9],
+    innerPetal: [32, 7],
+    palette: ['#FFE0CC', '#FFE3EC', '#D9F2E6', '#FFF9E3'],
+  },
+  {
+    name: 'Sky Meadow',
+    outerCount: 14,
+    innerCount: 12,
+    outerPetal: [38, 11],
+    innerPetal: [24, 8],
+    palette: ['#D6EAF8', '#CDEBD8', '#FFF3D6', '#E8F5E9'],
+  },
+  {
+    name: 'Rose Garden',
+    outerCount: 6,
+    innerCount: 5,
+    outerPetal: [56, 15],
+    innerPetal: [36, 11],
+    palette: ['#FFE3EC', '#F8D7E3', '#D9F2E6', '#FFF9E3'],
+  },
+  {
+    name: 'Citrus Fresh',
+    outerCount: 9,
+    innerCount: 7,
+    outerPetal: [42, 16],
+    innerPetal: [28, 12],
+    palette: ['#FFF3D6', '#D9F2E6', '#FFE0CC', '#CDEBD8'],
+  },
+];
 
 /** Teardrop petal pointing up from origin, length l, half-width w. */
 function petal(l: number, w: number): string {
   return `M 0 0 C ${-w} ${-l * 0.35} ${-w * 0.7} ${-l * 0.8} 0 ${-l} C ${w * 0.7} ${-l * 0.8} ${w} ${-l * 0.35} 0 0 Z`;
 }
 
-export function Lotus({ cx, cy, size, progress, now, opacity = 1, shine = false }: Props) {
+export function Lotus({ cx, cy, size, progress, now, opacity = 1, shine = false, species = 0 }: Props) {
+  const flower = FLOWER_SPECIES[species % FLOWER_SPECIES.length];
+  const { outerCount: OUTER, innerCount: INNER, outerPetal, innerPetal, palette } = flower;
   const k = size / 100;
   const spin = ((now / 90000) % (Math.PI * 2)) * (180 / Math.PI); // one turn / 1.5 min
   const total = OUTER + INNER;
@@ -59,12 +120,12 @@ export function Lotus({ cx, cy, size, progress, now, opacity = 1, shine = false 
             opacity={open}
           >
             <Path
-              path={petal(46, 13)}
-              color={shine ? colors.rainbow[i % 7] : PETAL_PASTELS[i % 4]}
+              path={petal(...outerPetal)}
+              color={shine ? colors.rainbow[i % 7] : palette[i % 4]}
               opacity={shine ? 0.85 : 1}
             />
             <Path
-              path={petal(46, 13)}
+              path={petal(...outerPetal)}
               style="stroke"
               strokeWidth={1.4}
               color={shine ? '#FFFFFF' : colors.sage}
@@ -85,12 +146,12 @@ export function Lotus({ cx, cy, size, progress, now, opacity = 1, shine = false 
             opacity={open}
           >
             <Path
-              path={petal(30, 10)}
-              color={shine ? colors.rainbow[(i + 3) % 7] : PETAL_PASTELS[(i + 1) % 4]}
+              path={petal(...innerPetal)}
+              color={shine ? colors.rainbow[(i + 3) % 7] : palette[(i + 1) % 4]}
               opacity={shine ? 0.9 : 1}
             />
             <Path
-              path={petal(30, 10)}
+              path={petal(...innerPetal)}
               style="stroke"
               strokeWidth={1.2}
               color={shine ? '#FFFFFF' : colors.forest}

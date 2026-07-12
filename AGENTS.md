@@ -24,6 +24,7 @@ Web-only input handling in `GameCanvas.tsx`: taps go through a plain `click` DOM
 ## Game design facts
 
 - Grid 3×5, `TAPS_TO_BREAK = 5`. Session = `RAINBOW_FULL = 30` breaks (two full fields), then finale: no refill, mandala shines vivid for 4.5 s with bloom sound, then results, then fresh cycle.
+- Mandala is one of `FLOWER_SPECIES` (`src/render/Lotus.tsx`, 6 species — different petal counts/proportions + a themed pastel palette each), picked once at random per session. Finale shine is always full rainbow regardless of species.
 - Every break rewards something: hidden emoji prize (~1 in 6 cubes, revealed through the glass as damage grows) or a joke line on a flying cloud.
 - Ambience: levitating sun, 5 random clouds, occasional 5 s rain, 9-tuft meadow whose flowers bloom with progress, fireflies, waving animal visitors every 12–32 s.
 

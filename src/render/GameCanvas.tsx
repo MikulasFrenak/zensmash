@@ -34,7 +34,7 @@ import { feelBloom, feelHit, feelShatter, feelPrize } from '@/feel';
 import { getSettings } from '@/state/settings';
 import { addToCollection } from '@/state/collection';
 import { FloatingMoment } from './FloatingMoment';
-import { Lotus } from './Lotus';
+import { FLOWER_SPECIES, Lotus } from './Lotus';
 import { PrizePop } from './PrizePop';
 import { UnicornDone } from '@/ui/UnicornDone';
 
@@ -102,6 +102,7 @@ export function GameCanvas({
   const [done, setDone] = useState(false);
   const [finale, setFinale] = useState(false);
   const [dropStart, setDropStart] = useState(() => Date.now());
+  const [flowerSpecies] = useState(() => Math.floor(Math.random() * FLOWER_SPECIES.length));
   const [, forceFrame] = useState(0);
   const recentLines = useRef<number[]>([]);
   const lastHit = useRef<{ id: string; time: number } | null>(null);
@@ -734,6 +735,7 @@ export function GameCanvas({
               now={now}
               opacity={finale ? 0.95 : 0.55}
               shine={finale}
+              species={flowerSpecies}
             />
           )}
 
