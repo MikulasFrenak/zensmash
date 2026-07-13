@@ -7,15 +7,13 @@ import {
   BlurMask,
   Canvas,
   Circle,
-  Group,
-  LinearGradient,
   Path,
   RadialGradient,
-  RoundedRect,
   vec,
 } from '@shopify/react-native-skia';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 
+import { trackSessionComplete, trackSessionStart } from '@/analytics';
 import {
   Block,
   createGrid,
@@ -27,14 +25,15 @@ import {
   GRID_ROWS,
   TAPS_TO_BREAK,
 } from '@/engine/blocks';
-import { crackPaths } from '@/engine/cracks';
+import { DROP_MS } from '@/engine/cubeMotion';
 import { pickLine } from '@/engine/moments';
 import { hashString, pickDifferent } from '@/engine/rng';
-import { MOMENTS, Locale } from '@/i18n/moments';
+import { MOMENTS, Locale } from '@/locales/moments';
 import { colors } from '@/theme/colors';
 import { feelBloom, feelHit, feelShatter, feelPrize } from '@/feel';
 import { getSettings } from '@/state/settings';
 import { addToCollection } from '@/state/collection';
+import { Cube } from './Cube';
 import { FloatingMoment } from './FloatingMoment';
 import { FLOWER_SPECIES, Lotus } from './Lotus';
 import { PrizePop } from './PrizePop';
@@ -68,7 +67,6 @@ interface Prize {
 
 const PARTICLE_LIFE_MS = 900;
 const PARTICLES_PER_BURST = 14;
-const DROP_MS = 700;
 const CHARGE_MS = 850;
 /**
  * Breaks needed for a full rainbow = two full fields of cubes (2 × 15).
@@ -108,6 +106,16 @@ export function GameCanvas({
   const [, forceFrame] = useState(0);
   const recentLines = useRef<number[]>([]);
   const lastHit = useRef<{ id: string; time: number; rel: { x: number; y: number } } | null>(null);
+
+  // session analytics tallies — reported once per RAINBOW_FULL cycle, see trackSessionComplete below
+  const sessionStart = useRef(Date.now());
+  const totalTaps = useRef(0);
+  const focusedHits = useRef(0);
+  const prizesFound = useRef(0);
+  useEffect(() => {
+    trackSessionStart(locale);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Ambient sky tick: 20fps native, halved to 10fps on web (CanvasKit's
   // JS↔WASM marshalling makes full-scene re-renders costlier there), paused
@@ -353,6 +361,8 @@ export function GameCanvas({
       const now = Date.now();
       const focused = isFocusedHit(lastHit.current, target.id, rel, now);
       const result = hitBlock(blocks, target.id, rel, focused ? FOCUS_BONUS_DAMAGE : 1);
+      totalTaps.current += 1;
+      if (focused) focusedHits.current += 1;
 
       if (result.destroyed) {
         feelShatter();
@@ -369,6 +379,7 @@ export function GameCanvas({
           };
           setPrizes((ps) => [...ps, p]);
           addToCollection(target.prize);
+          prizesFound.current += 1;
           feelPrize(); // whooooaaa!
         } else {
           showMoment(r.x + r.w / 2, r.y + r.h / 2);
@@ -379,6 +390,14 @@ export function GameCanvas({
           // finale: no new cubes — the mandala shines, then the results come
           setFinale(true);
           feelBloom();
+          trackSessionComplete({
+            locale,
+            durationMs: Date.now() - sessionStart.current,
+            totalTaps: totalTaps.current,
+            focusedHits: focusedHits.current,
+            prizesFound: prizesFound.current,
+            flowerSpecies: FLOWER_SPECIES[flowerSpecies % FLOWER_SPECIES.length].name,
+          });
           setTimeout(() => setDone(true), 4500);
         }
         onBlockBroken?.();
@@ -398,7 +417,7 @@ export function GameCanvas({
       // during the finale the field stays empty — the mandala takes the stage
       setBlocks(isFinale ? result.blocks : refillIfEmpty(result.blocks));
     },
-    [blocks, breaks, blockRect, spawnBurst, spawnCharge, spawnChips, showMoment, onBlockBroken],
+    [blocks, breaks, blockRect, spawnBurst, spawnCharge, spawnChips, showMoment, onBlockBroken, locale, flowerSpecies],
   );
 
   const tap = useMemo(
@@ -783,109 +802,9 @@ export function GameCanvas({
               />
             );
           })}
-          {blocks.map((b) => {
-            const r = blockRect(b);
-            // S5: staggered drop-in from above with ease-out
-            const delay = b.row * 55 + b.col * 25;
-            const p = Math.min(1, Math.max(0, (Date.now() - dropStart - delay) / DROP_MS));
-            const ease = 1 - Math.pow(1 - p, 3);
-            const dy = -(r.y + r.h + 40) * (1 - ease);
-            const y = r.y + dy;
-            // squash & stretch on hit — impact you can see
-            let sx = 1;
-            let sy = 1;
-            const hit = lastHit.current;
-            if (hit && hit.id === b.id) {
-              const dt = now - hit.time;
-              if (dt >= 0 && dt < 140) {
-                // gentle press — subtle, not rubbery
-                const q = Math.sin((Math.PI * dt) / 140) * 0.04;
-                sx = 1 + q * 0.5;
-                sy = 1 - q;
-              }
-            }
-            return (
-              <Group
-                key={b.id}
-                transform={[{ scaleX: sx }, { scaleY: sy }]}
-                origin={vec(r.x + r.w / 2, y + r.h)}
-              >
-                {/* soft drop shadow */}
-                <RoundedRect
-                  x={r.x + 2}
-                  y={y + 4}
-                  width={r.w}
-                  height={r.h}
-                  r={14}
-                  color={colors.forest}
-                  opacity={0.12}
-                />
-                {/* translucent face with vertical light gradient */}
-                <RoundedRect x={r.x} y={y} width={r.w} height={r.h} r={14} opacity={0.9}>
-                  <LinearGradient
-                    start={vec(r.x, y)}
-                    end={vec(r.x, y + r.h)}
-                    colors={[colors.blockFaceTops[b.colorIndex], colors.blockFaces[b.colorIndex]]}
-                  />
-                </RoundedRect>
-                {/* thin top sheen */}
-                <RoundedRect
-                  x={r.x + 4}
-                  y={y + 3}
-                  width={r.w - 8}
-                  height={Math.max(6, r.h * 0.16)}
-                  r={7}
-                  color="#FFFFFF"
-                  opacity={0.30}
-                />
-                {/* tiny glass bubbles — deterministic per block */}
-                {[0, 1, 2, 3, 4, 5, 6].map((k) => {
-                  const hb = hashString(`${b.id}bub${k}`);
-                  const bx = r.x + r.w * (0.12 + (hb % 72) / 100);
-                  const by = y + r.h * (0.22 + ((hb >> 6) % 64) / 100);
-                  const br = 1.2 + ((hb >> 12) % 26) / 10;
-                  return (
-                    <Circle
-                      key={`bub${k}`}
-                      cx={bx}
-                      cy={by}
-                      r={br}
-                      color="#FFFFFF"
-                      opacity={0.22 + ((hb >> 18) % 14) / 100}
-                    />
-                  );
-                })}
-                {/* T2: crack systems, one per received hit — deeper hits crack harder */}
-                {b.cracks.map((c, ci) =>
-                  crackPaths(c, r.w, r.h).map((d, pi) => (
-                    <React.Fragment key={`${b.id}-c${ci}-p${pi}`}>
-                      {/* light chip offset for depth */}
-                      <Path
-                        path={d}
-                        style="stroke"
-                        strokeWidth={2.2 + ci * 0.3}
-                        strokeCap="round"
-                        strokeJoin="round"
-                        color="#FFFFFF"
-                        opacity={0.5}
-                        transform={[{ translateX: r.x + 1 }, { translateY: y + 1.5 }]}
-                      />
-                      <Path
-                        path={d}
-                        style="stroke"
-                        strokeWidth={1.4 + ci * 0.35}
-                        strokeCap="round"
-                        strokeJoin="round"
-                        color={colors.blockCrack}
-                        opacity={0.85}
-                        transform={[{ translateX: r.x }, { translateY: y }]}
-                      />
-                    </React.Fragment>
-                  )),
-                )}
-              </Group>
-            );
-          })}
+          {blocks.map((b) => (
+            <Cube key={b.id} block={b} rect={blockRect(b)} now={now} dropStart={dropStart} hit={lastHit.current} />
+          ))}
 
           {/* Rainbow reward burst */}
           {particles.map((p) => {
@@ -938,6 +857,11 @@ export function GameCanvas({
             setBlocks(createGrid());
             setDropStart(Date.now());
             setFlowerSpecies((current) => pickDifferent(FLOWER_SPECIES.length, current));
+            sessionStart.current = Date.now();
+            totalTaps.current = 0;
+            focusedHits.current = 0;
+            prizesFound.current = 0;
+            trackSessionStart(locale);
           }}
         />
       )}

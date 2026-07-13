@@ -5,9 +5,10 @@
 import React from 'react';
 import { Pressable, StyleSheet, Switch, Text, View } from 'react-native';
 
+import { trackSettingChanged } from '@/analytics';
 import { setSetting, useSettings } from '@/state/settings';
-import { UI } from '@/i18n/ui';
-import { LOCALES, LOCALE_LABELS, Locale } from '@/i18n/moments';
+import { UI } from '@/locales/ui';
+import { LOCALES, LOCALE_LABELS, Locale } from '@/locales/moments';
 import { colors } from '@/theme/colors';
 
 interface Props {
@@ -34,13 +35,17 @@ export function ZenMenu({ broken, locale, onLocaleChange, onClose }: Props) {
               [t.sound, 'sound'],
               [t.haptics, 'haptics'],
               [t.particles, 'particles'],
+              [t.shareData, 'analytics'],
             ] as const
           ).map(([label, key]) => (
             <View key={key} style={styles.row}>
               <Text style={styles.rowLabel}>{label}</Text>
               <Switch
                 value={settings[key]}
-                onValueChange={(v) => setSetting(key, v)}
+                onValueChange={(v) => {
+                  setSetting(key, v);
+                  trackSettingChanged(key, v);
+                }}
                 trackColor={{ true: colors.sage, false: '#DDD' }}
                 thumbColor={colors.surface}
               />
