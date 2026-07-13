@@ -27,7 +27,7 @@ After two full fields of cubes, the mandala shines, a chord blooms, and you get 
 No scores. No timers. No ads. No fail state. No accounts, ever.
 Just you, some very smashable cubes, and a world that's happy you came.
 
-In English, Slovak, Czech, Hungarian, Polish, German, French and Spanish.
+In English, Slovak, Czech, Hungarian, Polish, German, French, Spanish, Norwegian, Danish, Swedish and Dutch.
 
 **Keywords (iOS, ≤100 chars):**
 stress relief,calm,relax,smash,satisfying,fidget,zen,anxiety,asmr,break,mindfulness
