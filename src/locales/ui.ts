@@ -311,4 +311,148 @@ export const UI: Record<Locale, UiStrings> = {
     collectionTitle: 'Tu cofre del tesoro 🎁',
     collectionEmpty: 'Vacío… por ahora. ¡Los cubos esconden sorpresas! 👀',
   },
+  no: {
+    sessionTitle: 'Din zen-pause 🌿',
+    blocksBroken: (n) => `${n} terninger ble til konfetti 🎉`,
+    nothingYet: 'Alle terningene lever fortsatt. Foreløpig. 😏',
+    feelLighter: 'Lettere allerede, ikke sant?',
+    sound: 'Lyd 🔊',
+    haptics: 'Vibrasjon 📳',
+    particles: 'Effekter ✨',
+    shareData: 'Bruksdata 📊',
+    keepSmashing: 'Tilbake til knusing! 💥',
+    doneVariants: [
+      {
+        title: 'Terningene er borte, lille enhjørning! 🦄',
+        text: 'Stresset fløy sin vei, nå skinner du i dag 🌈 Stråle videre, solstråle! ☀️',
+      },
+      {
+        title: 'Regnbuen er ferdig! 🌈',
+        text: 'Stresset kommer ikke tilbake. Det sa ikke engang ha det. 👋✨',
+      },
+      {
+        title: 'Du klarte det, magiske menneske! ✨',
+        text: 'Et sted er en enhjørning stolt av deg. Denne, faktisk. 🦄',
+      },
+      {
+        title: 'Alt knust, alt rolig 🌿',
+        text: 'Advarsel: du kan nå gnistre ukontrollert ✨ Glad som en enhjørning med kake på en regnbue 🦄🍰',
+      },
+      {
+        title: 'Stresset har forlatt chatten 👋',
+        text: 'Offisielt roligere enn en katt i solen. 😌☀️',
+      },
+    ],
+    doneButton: 'La oss slippe ut mer damp! 💨',
+    collectionTitle: 'Din skattekiste 🎁',
+    collectionEmpty: 'Tom … foreløpig. Terningene gjemmer godsaker! 👀',
+  },
+  da: {
+    sessionTitle: 'Din zen-pause 🌿',
+    blocksBroken: (n) => `${n} terninger blev til konfetti 🎉`,
+    nothingYet: 'Alle terninger lever stadig. Indtil videre. 😏',
+    feelLighter: 'Lettere allerede, ikke?',
+    sound: 'Lyd 🔊',
+    haptics: 'Vibration 📳',
+    particles: 'Effekter ✨',
+    shareData: 'Brugsdata 📊',
+    keepSmashing: 'Tilbage til at smadre! 💥',
+    doneVariants: [
+      {
+        title: 'Terningerne er væk, lille enhjørning! 🦄',
+        text: 'Stresset fløj sin vej, nu er dagen din 🌈 Bliv ved med at skinne, solstråle! ☀️',
+      },
+      {
+        title: 'Regnbuen er færdig! 🌈',
+        text: 'Stresset kommer ikke tilbage. Det sagde ikke engang farvel. 👋✨',
+      },
+      {
+        title: 'Du klarede det, magiske menneske! ✨',
+        text: 'Et sted er en enhjørning stolt af dig. Denne, faktisk. 🦄',
+      },
+      {
+        title: 'Alt smadret, alt roligt 🌿',
+        text: 'Advarsel: du kan nu funkle ukontrolleret ✨ Glad som en enhjørning med kage på en regnbue 🦄🍰',
+      },
+      {
+        title: 'Stresset har forladt chatten 👋',
+        text: 'Officielt mere afslappet end en kat i solen. 😌☀️',
+      },
+    ],
+    doneButton: 'Lad os slippe mere damp ud! 💨',
+    collectionTitle: 'Din skattekiste 🎁',
+    collectionEmpty: 'Tom … indtil videre. Terningerne gemmer godter! 👀',
+  },
+  sv: {
+    sessionTitle: 'Din zen-paus 🌿',
+    blocksBroken: (n) => `${n} kuber blev till konfetti 🎉`,
+    nothingYet: 'Alla kuber lever fortfarande. Så länge. 😏',
+    feelLighter: 'Lättare redan, eller hur?',
+    sound: 'Ljud 🔊',
+    haptics: 'Vibration 📳',
+    particles: 'Effekter ✨',
+    shareData: 'Användningsdata 📊',
+    keepSmashing: 'Tillbaka till krossandet! 💥',
+    doneVariants: [
+      {
+        title: 'Kuberna är borta, lilla enhörning! 🦄',
+        text: 'Stressen flög sin väg, nu är dagen din 🌈 Fortsätt lysa, solstråle! ☀️',
+      },
+      {
+        title: 'Regnbågen är klar! 🌈',
+        text: 'Stressen kommer inte tillbaka. Den sa inte ens hej då. 👋✨',
+      },
+      {
+        title: 'Du klarade det, magiska människa! ✨',
+        text: 'Någonstans är en enhörning stolt över dig. Den här, faktiskt. 🦄',
+      },
+      {
+        title: 'Allt krossat, allt lugnt 🌿',
+        text: 'Varning: du kan nu glittra okontrollerat ✨ Glad som en enhörning som äter tårta på en regnbåge 🦄🍰',
+      },
+      {
+        title: 'Stressen har lämnat chatten 👋',
+        text: 'Officiellt lugnare än en katt i solen. 😌☀️',
+      },
+    ],
+    doneButton: 'Dags att släppa ut mer ånga! 💨',
+    collectionTitle: 'Din skattkista 🎁',
+    collectionEmpty: 'Tom … så länge. Kuberna gömmer godsaker! 👀',
+  },
+  nl: {
+    sessionTitle: 'Jouw zen-pauze 🌿',
+    blocksBroken: (n) => `${n} blokjes werden confetti 🎉`,
+    nothingYet: 'Alle blokjes leven nog. Voorlopig. 😏',
+    feelLighter: 'Nu al lichter, toch?',
+    sound: 'Geluid 🔊',
+    haptics: 'Trillingen 📳',
+    particles: 'Effecten ✨',
+    shareData: 'Gebruiksgegevens 📊',
+    keepSmashing: 'Terug naar het beuken! 💥',
+    doneVariants: [
+      {
+        title: 'De blokjes zijn weg, kleine eenhoorn! 🦄',
+        text: 'De stress is gevlogen, jij hebt de dag gered 🌈 Blijf schitteren, zonnestraaltje! ☀️',
+      },
+      {
+        title: 'Regenboog compleet! 🌈',
+        text: 'De stress komt niet terug. Zei niet eens gedag. 👋✨',
+      },
+      {
+        title: 'Je hebt het gedaan, magisch mens! ✨',
+        text: 'Ergens is een eenhoorn trots op je. Deze, om precies te zijn. 🦄',
+      },
+      {
+        title: 'Alles gebeukt, alles rustig 🌿',
+        text: 'Waarschuwing: je kunt nu ongecontroleerd glinsteren ✨ Blij als een eenhoorn die taart eet op een regenboog 🦄🍰',
+      },
+      {
+        title: 'De stress heeft de chat verlaten 👋',
+        text: 'Officieel relaxter dan een kat in de zon. 😌☀️',
+      },
+    ],
+    doneButton: 'Nog wat stoom afblazen! 💨',
+    collectionTitle: 'Jouw schatkist 🎁',
+    collectionEmpty: 'Leeg … voorlopig. De blokjes verstoppen verrassingen! 👀',
+  },
 };

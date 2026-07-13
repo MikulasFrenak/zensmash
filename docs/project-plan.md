@@ -8,7 +8,7 @@ Structured per the [ai-delivery-playbook](https://github.com/MikulasFrenak/ai-de
 > hidden emoji surprises + 🎁 treasure collection, blooming lotus mandala, rainbow-as-progress-bar
 > with charge sparks, living sky (levitating sun, random clouds, gentle rain), blooming footer
 > meadow, fireflies, waving animal visitors with a synthesized voice, 6 shatter melodies + voices,
-> phrases and full UI in 8 languages (EN/SK/CZ/HU/PL/DE/FR/ES), squash-and-stretch game feel.
+> phrases and full UI in 12 languages (EN/SK/CZ/HU/PL/DE/FR/ES/NO/DK/SE/NL), squash-and-stretch game feel.
 > **Release status:** Web — **released**, live at [zensmash.mikulas-frenak.workers.dev](https://zensmash.mikulas-frenak.workers.dev) (own Cloudflare Worker, auto-deploys on push to `main`, embedded on the portfolio site's case study). App Store (iOS) — **in progress** (S9 done: icons, EAS build profiles, store docs; submission itself still open). Google Play (Android) — **in progress** (needs the closed-test cohort below before production access). Repo is now public.
 
 ---
@@ -48,7 +48,7 @@ Per the playbook, each Story below gets `analyze-story` treatment (summary, test
 |---|---|---|
 | S6: Home screen | No menu — straight into the field | ✅ plus a living scene: levitating smiling sun, 5 random clouds, occasional rain, blooming meadow, fireflies, waving animal visitors |
 | S7: Session end | Gentle summary, no scores | ✅ session arc: 30 breaks (2 fields) → mandala shines in full rainbow to a bloom chord (4.5 s) → results with 5 rhyming variants + treasures → begin again |
-| S8: Settings | Sound/haptics/particles toggles | ✅ 🌿 menu with toggles + 8-language selector; 🎁 treasures modal; opt-in anonymous session analytics toggle (off by default). Still open: respect system reduce-motion; persist settings/treasures (AsyncStorage) |
+| S8: Settings | Sound/haptics/particles toggles | ✅ 🌿 menu with toggles + 12-language selector; 🎁 treasures modal; opt-in anonymous session analytics toggle (off by default). Still open: respect system reduce-motion; persist settings/treasures (AsyncStorage) |
 
 **Added beyond plan:** hidden emoji prizes (~1 in 6 cubes, revealed through the glass as it cracks, "whooooaaa" pop, collected as treasures); jokes riding flying clouds (native phrase pools, not translations); lotus mandala blooming petal-per-break behind the cubes; rainbow as a color-fill progress bar; focused-hit bonus (fast, precise repeat taps break a cube in 3 taps instead of 5); 13 mandala flower species, randomized per session; opt-in anonymous session analytics (`session_start`/`session_complete`/`settings_changed` → Cloudflare Analytics Engine via the Worker's own `POST /api/track`, no PII, off by default).
 

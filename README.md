@@ -7,7 +7,7 @@ No scores. No timers. No fail state. Just smashing — and a world that blooms a
 ## The loop
 
 - **Smash** — 3×5 grid of glassy green cubes, 5 taps each (fewer if you tap the same spot fast — a focused hit counts double). Cracks spread from exactly where you tap, ice chips fly, cubes squash under your finger.
-- **Get rewarded** — every break gives you something: a hidden emoji surprise pops free (🦆🧦🍩 — collected in your 🎁 treasures), or a joke floats up on a little cloud (native phrases in EN/SK/CZ/HU/PL/DE/FR/ES).
+- **Get rewarded** — every break gives you something: a hidden emoji surprise pops free (🦆🧦🍩 — collected in your 🎁 treasures), or a joke floats up on a little cloud (native phrases in EN/SK/CZ/HU/PL/DE/FR/ES/NO/DK/SE/NL).
 - **Watch the world wake up** — the rainbow fills with color stripe by stripe, a lotus mandala blooms petal by petal behind the cubes, meadow flowers open, fireflies appear. A smiling sun levitates, clouds drift, sometimes it gently rains. Animals drop by to wave at you ("hello!").
 - **Finish** — after 30 breaks (two full fields) the mandala shines in full rainbow color to a blooming chord, then your results: blocks broken, treasures found, and a rhyming compliment. *"Stres je fuč, od dúhy máš kľúč 🌈"*
 
@@ -49,7 +49,7 @@ src/
   render/     Skia scene: GameCanvas, Cube, Lotus, HappyRainbow, FloatingMoment, PrizePop, Visitor
   feel/       the juice API: feelHit/feelShatter/feelHello/feelPrize/feelBloom
   analytics/  opt-in session analytics: trackSessionStart/trackSessionComplete/trackSettingChanged
-  locales/    8 languages: phrase pools + UI strings (5 celebration variants)
+  locales/    12 languages: phrase pools + UI strings (5 celebration variants)
   state/      settings + treasure collection (in-memory)
   theme/      green/white palette; rainbow reserved for rewards
   ui/         ZenMenu 🌿, CollectionModal 🎁, UnicornDone (results)
@@ -64,7 +64,7 @@ worker/         Cloudflare Worker: serves the web build + POST /api/track (own t
 
 ## Status
 
-**MVP feature-complete** — core loop, session arc, rewards, ambience, sound, 8 languages, settings, treasures, opt-in anonymous session analytics. Verified on a real iPhone via Expo Go.
+**MVP feature-complete** — core loop, session arc, rewards, ambience, sound, 12 languages, settings, treasures, opt-in anonymous session analytics. Verified on a real iPhone via Expo Go.
 
 - **Web** — released, live at [zensmash.mikulas-frenak.workers.dev](https://zensmash.mikulas-frenak.workers.dev), auto-deploys on push to `main`.
 - **iOS (App Store)** — in progress. App icon + store assets (S9) done; hosted privacy policy + submission still open.
