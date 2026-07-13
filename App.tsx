@@ -8,7 +8,7 @@ import { Visitor, VISITORS } from '@/render/Visitor';
 import { ZenMenu } from '@/ui/ZenMenu';
 import { CollectionModal } from '@/ui/CollectionModal';
 import { totalCollected, useCollection } from '@/state/collection';
-import { Locale } from '@/i18n/moments';
+import { Locale } from '@/locales/moments';
 import { colors } from '@/theme/colors';
 
 export default function App() {

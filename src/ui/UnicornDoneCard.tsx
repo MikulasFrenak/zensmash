@@ -5,8 +5,8 @@
 import React, { useEffect, useRef } from 'react';
 import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { UI } from '@/i18n/ui';
-import { Locale } from '@/i18n/moments';
+import { UI } from '@/locales/ui';
+import { Locale } from '@/locales/moments';
 import { HappyRainbowBadge } from '@/render/HappyRainbow';
 import { useCollection, totalCollected } from '@/state/collection';
 import { colors } from '@/theme/colors';
