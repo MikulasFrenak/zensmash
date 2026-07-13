@@ -34,7 +34,7 @@ At [appstoreconnect.apple.com](https://appstoreconnect.apple.com):
 
 - [ ] My Apps → **+ New App** — platform iOS, name **ZenSmash**, bundle ID `com.mikulasfrenak.zensmash`, SKU `zensmash`
 - [ ] App Information: category Games/Casual, age rating questionnaire (all "No" → 4+)
-- [ ] App Privacy: **"Data Not Collected"** (truthfully — we collect nothing)
+- [ ] App Privacy: **not** "Data Not Collected" anymore (S8 added an opt-in analytics toggle — see `privacy-policy.md`). Declare data type **"Product Interaction"** under Usage Data: Collected: Yes · Linked to Identity: **No** · Used for Tracking: **No** (events carry no identifier of any kind — see `AGENTS.md` "Analytics"). If the toggle stays off by default this may also qualify for "Data Not Collected" only if Apple's form allows conditioning on an opt-in switch — check current App Store Connect wording before submitting
 - [ ] Pricing: Free, all territories
 - [ ] Paste description/keywords/subtitle from `listing.md` (EN primary; add SK/CZ localizations)
 - [ ] Privacy policy URL from step 1
@@ -60,7 +60,7 @@ npx eas-cli submit --platform ios --latest
 ## 6. Submit for review
 
 - [ ] Attach the build to version 1.0.0, fill "What's New"
-- [ ] Review notes: "Relaxation game. No account needed. No data collected. Tap cubes to break them."
+- [ ] Review notes: "Relaxation game. No account needed. Optional anonymous usage stats, off by default. Tap cubes to break them."
 - [ ] Submit — typical review 24–48 h
 
 ## 7. Android (parallel track)
@@ -68,7 +68,7 @@ npx eas-cli submit --platform ios --latest
 - [ ] Google Play Console account ($25 one-time)
 - [ ] `npx eas-cli build --platform android --profile production`
 - [ ] Closed test: **12 testers opted in for 14 consecutive days** (new personal accounts) — recruit now, this is the critical path
-- [ ] Data safety form: "No data collected" · Play listing from `listing.md`
+- [ ] Data safety form: declare **"App activity"** data type collected, purpose "Analytics," **not** shared with third parties for their own use (Cloudflare is infrastructure we operate, not a data buyer), encrypted in transit (HTTPS), collection is **optional/user-controlled** (off by default) — no persistent user identifier exists so there's nothing to delete on request. Play listing from `listing.md`
 
 ## Open dev tasks before/with release
 

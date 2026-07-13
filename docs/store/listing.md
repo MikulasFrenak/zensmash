@@ -24,7 +24,7 @@ And as your stress leaves, the world wakes up:
 
 After two full fields of cubes, the mandala shines, a chord blooms, and you get your results — plus a rhyme to take with you. Then you can go again. Or not. There's no pressure here.
 
-No scores. No timers. No ads. No fail state. No data collected.
+No scores. No timers. No ads. No fail state. No accounts, ever.
 Just you, some very smashable cubes, and a world that's happy you came.
 
 In English, Slovak, Czech, Hungarian, Polish, German, French and Spanish.
@@ -52,7 +52,7 @@ Každé rozbitie ťa odmení: 🎁 skryté prekvapenie uväznené v kocke, alebo
 
 A ako stres odchádza, svet sa prebúdza: dúha sa napĺňa farbami, za kockami rozkvitá lotosová mandala, lúka kvitne, občas jemne zaprší a zvieratká ti prídu zamávať. 🐢
 
-Žiadne skóre. Žiadne časovače. Žiadne reklamy. Žiadny zber dát.
+Žiadne skóre. Žiadne časovače. Žiadne reklamy. Žiadny účet.
 Len ty, kocky na rozbitie a svet, ktorý sa teší, že si prišiel.
 
 ---
@@ -72,5 +72,5 @@ Každé rozbití tě odmění: 🎁 skryté překvapení uvězněné v kostce, n
 
 A jak stres odchází, svět se probouzí: duha se plní barvami, za kostkami rozkvétá lotosová mandala, louka kvete, občas jemně zaprší a zvířátka ti přijdou zamávat. 🐢
 
-Žádné skóre. Žádné časovače. Žádné reklamy. Žádný sběr dat.
+Žádné skóre. Žádné časovače. Žádné reklamy. Žádný účet.
 Jen ty, kostky na rozbití a svět, který má radost, že jsi přišel.
