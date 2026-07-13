@@ -14,6 +14,7 @@ export interface UiStrings {
   sound: string;
   haptics: string;
   particles: string;
+  shareData: string;
   keepSmashing: string;
   doneVariants: readonly DoneVariant[];
   doneButton: string;
@@ -30,6 +31,7 @@ export const UI: Record<Locale, UiStrings> = {
     sound: 'Sound 🔊',
     haptics: 'Haptics 📳',
     particles: 'Effects ✨',
+    shareData: 'Usage data 📊',
     keepSmashing: 'Back to smashing! 💥',
     doneVariants: [
       {
@@ -65,6 +67,7 @@ export const UI: Record<Locale, UiStrings> = {
     sound: 'Zvuk 🔊',
     haptics: 'Vibrácie 📳',
     particles: 'Efekty ✨',
+    shareData: 'Dáta o používaní 📊',
     keepSmashing: 'Späť k rozbíjaniu! 💥',
     doneVariants: [
       {
@@ -100,6 +103,7 @@ export const UI: Record<Locale, UiStrings> = {
     sound: 'Zvuk 🔊',
     haptics: 'Vibrace 📳',
     particles: 'Efekty ✨',
+    shareData: 'Data o používání 📊',
     keepSmashing: 'Zpátky k rozbíjení! 💥',
     doneVariants: [
       {
@@ -135,6 +139,7 @@ export const UI: Record<Locale, UiStrings> = {
     sound: 'Hang 🔊',
     haptics: 'Rezgés 📳',
     particles: 'Effektek ✨',
+    shareData: 'Használati adatok 📊',
     keepSmashing: 'Vissza törni! 💥',
     doneVariants: [
       {
@@ -170,6 +175,7 @@ export const UI: Record<Locale, UiStrings> = {
     sound: 'Dźwięk 🔊',
     haptics: 'Wibracje 📳',
     particles: 'Efekty ✨',
+    shareData: 'Dane użytkowania 📊',
     keepSmashing: 'Wracamy do rozbijania! 💥',
     doneVariants: [
       {
@@ -205,6 +211,7 @@ export const UI: Record<Locale, UiStrings> = {
     sound: 'Ton 🔊',
     haptics: 'Vibration 📳',
     particles: 'Effekte ✨',
+    shareData: 'Nutzungsdaten 📊',
     keepSmashing: 'Zurück zum Zertrümmern! 💥',
     doneVariants: [
       {
@@ -240,6 +247,7 @@ export const UI: Record<Locale, UiStrings> = {
     sound: 'Son 🔊',
     haptics: 'Vibrations 📳',
     particles: 'Effets ✨',
+    shareData: "Données d'usage 📊",
     keepSmashing: 'Retour au cassage ! 💥',
     doneVariants: [
       {
@@ -275,6 +283,7 @@ export const UI: Record<Locale, UiStrings> = {
     sound: 'Sonido 🔊',
     haptics: 'Vibración 📳',
     particles: 'Efectos ✨',
+    shareData: 'Datos de uso 📊',
     keepSmashing: '¡A seguir rompiendo! 💥',
     doneVariants: [
       {

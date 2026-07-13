@@ -8,9 +8,11 @@ export interface Settings {
   sound: boolean;
   haptics: boolean;
   particles: boolean;
+  /** opt-in, off by default — matches the app's no-pressure stance */
+  analytics: boolean;
 }
 
-let settings: Settings = { sound: true, haptics: true, particles: true };
+let settings: Settings = { sound: true, haptics: true, particles: true, analytics: false };
 const listeners = new Set<() => void>();
 
 export const getSettings = (): Settings => settings;

@@ -25,7 +25,7 @@ interface Props {
 }
 
 /** Rainbow crown — curls across the top of the head, red to violet. */
-const CROWN: Array<[number, number, number]> = [
+const CROWN: [number, number, number][] = [
   [22, 32, 8.5],
   [30, 24, 8.5],
   [40, 19, 8.5],
@@ -36,7 +36,7 @@ const CROWN: Array<[number, number, number]> = [
 ];
 
 /** Hanging curls down the right side. */
-const SIDE_CURLS: Array<[number, number, number]> = [
+const SIDE_CURLS: [number, number, number][] = [
   [83, 44, 7],
   [85, 56, 6],
 ];

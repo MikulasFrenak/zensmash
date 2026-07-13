@@ -5,8 +5,8 @@ import React from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { useCollection } from '@/state/collection';
-import { UI } from '@/i18n/ui';
-import { Locale } from '@/i18n/moments';
+import { UI } from '@/locales/ui';
+import { Locale } from '@/locales/moments';
 import { colors } from '@/theme/colors';
 
 interface Props {

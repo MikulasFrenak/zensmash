@@ -45,14 +45,16 @@ npm run lint && npm run typecheck && npm test
 
 ```
 src/
-  engine/   pure logic: blocks, procedural cracks, moments, rng (unit-tested)
-  render/   Skia scene: GameCanvas, Lotus, HappyRainbow, FloatingMoment, PrizePop, Visitor
-  feel/     the juice API: feelHit/feelShatter/feelHello/feelPrize/feelBloom
-  i18n/     8 languages: phrase pools + UI strings (5 celebration variants)
-  state/    settings + treasure collection (in-memory)
-  theme/    green/white palette; rainbow reserved for rewards
-  ui/       ZenMenu 🌿, CollectionModal 🎁, UnicornDone (results)
+  engine/     pure logic: blocks, cracks, cubeMotion, mandala, moments, rng (unit-tested)
+  render/     Skia scene: GameCanvas, Cube, Lotus, HappyRainbow, FloatingMoment, PrizePop, Visitor
+  feel/       the juice API: feelHit/feelShatter/feelHello/feelPrize/feelBloom
+  analytics/  opt-in session analytics: trackSessionStart/trackSessionComplete/trackSettingChanged
+  locales/    8 languages: phrase pools + UI strings (5 celebration variants)
+  state/      settings + treasure collection (in-memory)
+  theme/      green/white palette; rainbow reserved for rewards
+  ui/         ZenMenu 🌿, CollectionModal 🎁, UnicornDone (results)
 assets/sounds/  synthesized WAVs (crack, shatter1-6, hello, prize, bloom)
+worker/         Cloudflare Worker: serves the web build + POST /api/track (own tsconfig)
 ```
 
 ## Project docs
@@ -62,7 +64,7 @@ assets/sounds/  synthesized WAVs (crack, shatter1-6, hello, prize, bloom)
 
 ## Status
 
-**MVP feature-complete** — core loop, session arc, rewards, ambience, sound, 8 languages, settings, treasures. Verified on a real iPhone via Expo Go.
+**MVP feature-complete** — core loop, session arc, rewards, ambience, sound, 8 languages, settings, treasures, opt-in anonymous session analytics. Verified on a real iPhone via Expo Go.
 
 - **Web** — released, live at [zensmash.mikulas-frenak.workers.dev](https://zensmash.mikulas-frenak.workers.dev), auto-deploys on push to `main`.
 - **iOS (App Store)** — in progress. App icon + store assets (S9) done; hosted privacy policy + submission still open.

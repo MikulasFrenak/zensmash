@@ -6,5 +6,8 @@
     "paths": {
       "@/*": ["./src/*"]
     }
-  }
+  },
+  // worker/ runs in the Workers runtime (not RN/DOM) and has its own
+  // isolated tsconfig — see worker/tsconfig.json and `npm run typecheck`.
+  "exclude": ["worker"]
 }

@@ -1,14 +1,22 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "zensmash",
+  "main": "worker/index.ts",
   "compatibility_date": "2026-07-12",
   "observability": {
     "enabled": true
   },
   "assets": {
     "directory": "dist",
+    "binding": "ASSETS",
     "not_found_handling": "single-page-application"
   },
+  // opt-in, anonymous session analytics (POST /api/track) — see worker/index.ts
+  // and src/analytics/index.ts. Dataset auto-provisions on first write, no
+  // manual dashboard setup needed.
+  "analytics_engine_datasets": [
+    { "binding": "ANALYTICS", "dataset": "zensmash_events" }
+  ],
   "compatibility_flags": [
     "nodejs_compat"
   ]
