@@ -11,13 +11,12 @@ Work through top to bottom. Items marked 🤖 are ready/automated; ⚠️ needs 
 - [ ] ⚠️ Apple Developer enrollment approved (email from Apple, ~2 days)
 - [ ] ⚠️ Expo account: `npx eas-cli login`
 
-## 1. Host the privacy policy (5 min)
+## 1. Host the privacy policy ✅
 
-Both stores require a public URL. Easiest: GitHub Pages.
+Served by our own Cloudflare Worker (`worker/index.ts`, route `GET /privacy`) — deploys with the web build on push to `main`.
 
-- [ ] Repo Settings → Pages → Deploy from branch `main`, folder `/docs`
-- [ ] Convert `docs/store/privacy-policy.md` → `docs/privacy.html` (or keep .md — GitHub Pages renders it)
-- [ ] URL will be: `https://mikulasfrenak.github.io/zensmash/store/privacy-policy`
+- [x] Public URL for both stores: **https://zensmash.mikulas-frenak.workers.dev/privacy**
+- [ ] After merging, open the URL once to verify it renders
 
 ## 2. First cloud build
 
