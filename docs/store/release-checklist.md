@@ -89,3 +89,7 @@ npx eas-cli submit --platform ios --latest
 
 - [ ] Persist settings + treasures (AsyncStorage) — nice for v1.0, required feel for v1.1
 - [ ] Respect reduce-motion (S8 leftover)
+
+## Deferred to v1.1
+
+- [ ] **Native iPad support** — v1.0 ships iPhone-only (`ios.supportsTablet: false` in `app.json`), because Apple then doesn't require 13" iPad screenshots and we had no way to take proper ones. iPads can still install and play the app in scaled iPhone-compatibility mode. For 1.1: design a real iPad layout (wider grid, more sky), flip `supportsTablet: true`, take 13" screenshots (2064×2752) in the iPad Simulator, add them to ASC.
