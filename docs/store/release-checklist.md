@@ -2,7 +2,15 @@
 
 Work through top to bottom. Items marked 🤖 are ready/automated; ⚠️ needs you.
 
-> **STATUS (2026-07-18 evening): 🍏 iOS v1.0.0 (build 5) SUBMITTED — "Waiting for Review"!**
+> **STATUS (2026-07-18 night): 🍏🤖 BOTH PLATFORMS IN REVIEW — same day!**
+> **Android:** closed-test release (v1.0.0, versionCode 2) submitted to Google review — full store
+> listing (icon 512, feature graphic, screenshots, EN description), all declarations done (no ads
+> ID, no financial features, data safety = optional anonymous App interactions, content rating
+> Everyone, target 13+, contacts, countries). Once approved: create tester email list in
+> Testing → Closed testing → Testers, share the opt-in link
+> (`https://play.google.com/apps/testing/com.mikulasfrenak.zensmash`) with 12+ people → 14-day clock.
+>
+> **iOS (earlier today):** v1.0.0 (build 5) SUBMITTED — "Waiting for Review"
 > Full listing done: screenshots (resized to 1284×2778), EN description/keywords, privacy answers
 > published (Product Interaction, opt-in, not linked, no tracking), age rating 4+, content rights,
 > pricing Free/175 countries, contact info. v1.0 ships iPhone-only (see "Deferred to v1.1").
