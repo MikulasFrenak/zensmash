@@ -34,6 +34,7 @@ Rules learned the hard way:
 - After dependency or asset changes, restart with `npx expo start -c` (clears Metro cache).
 - If Expo Go says "Project is incompatible with this version of Expo Go", realign with `npm install expo@^54.0.0 && npx expo install --fix`.
 - `expo-status-bar` is a component, not a config plugin — it must NOT be listed in `plugins` in `app.json`.
+- **Peer deps can smuggle in the wrong SDK.** `expo-audio` declares `"expo-asset": "*"` as a peer, so npm hoisted `expo-asset@57` + `expo-constants@57` into our SDK-54 tree — release builds then crashed instantly on BOTH platforms (`NoClassDefFoundError: expo.modules.kotlin.types.AnyTypeCache`) while Expo Go worked fine (it ships its own natives and masks the mismatch). Fix: both packages are pinned as direct deps. **Before every `eas build`, run `npm ls expo-asset expo-constants`** — you must see a single 12.x/18.x, never 57.x. Note `expo install --fix` won't catch this (direct deps only). Debug recipe that found it: Android Studio emulator + `adb logcat "*:E"`.
 
 ### Quality gate (run before every commit)
 

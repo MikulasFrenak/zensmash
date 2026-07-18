@@ -42,6 +42,7 @@ Client posts to `/api/track` — same-origin path on web (works both standalone 
 - Branching: short-lived feature branches off `main`, named `feat/S<n>-slug` or `fix/slug`. PRs into `main`, no direct pushes.
 - Commits: conventional commits (`feat:`, `fix:`, `chore:`, `test:`).
 - Dependencies: pinned to Expo SDK 54 (test device's Expo Go). Add packages with `npx expo install <pkg>`, never plain `npm install <pkg>`. See README "SDK version".
+- Transitive expo-* versions can drift even when package.json is clean: some expo packages declare peers as `"*"` (e.g. expo-audio → expo-asset), and npm resolves those to *latest*, hoisting an SDK-57 native module into an SDK-54 build → instant startup crash (`NoClassDefFoundError: expo.modules.kotlin.types.AnyTypeCache`) on **release builds only** (Expo Go ships its own natives, so it masks this completely). Guard: `expo-asset` and `expo-constants` are pinned as direct deps; before ANY `eas build`, run `npm ls expo-asset expo-constants` and verify a single SDK-54 version (12.x / 18.x), no 57.x anywhere. `expo install --fix` does NOT catch this — it only checks direct deps.
 - Quality gate before commit: `npm run lint && npm run typecheck && npm test`.
 - Architecture rule (playbook): present options + get explicit agreement before non-trivial implementation.
 - Design rules: no screen shake, no timers, no fail states, no scores/leaderboards. Calm is a feature. Squash-and-stretch stays subtle (≤4%). Rainbow = reward only.

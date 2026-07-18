@@ -2,36 +2,50 @@
 
 Work through top to bottom. Items marked 🤖 are ready/automated; ⚠️ needs you.
 
-## 0. Prerequisites
+> **STATUS (2026-07-18):** Both platforms built & submitted once; first builds crashed at startup
+> (transitive expo-asset@57 — fixed, see README) and were rebuilt with the fix + rainbow Android icon.
+> Android fix verified in emulator ✅. **Now:** re-submit iOS to TestFlight (step 5) and verify on
+> iPhone, then screenshots (4) → ASC listing (3) → review (6). Android: production build + closed
+> test with 12 testers (7) — recruit them NOW, their 14-day clock is the critical path.
 
-- [x] 🤖 App icon, adaptive icon, splash (`assets/`), wired in `app.json`
+## 0. Prerequisites ✅ all done
+
+- [x] 🤖 App icon, adaptive icon (now with rainbow 🌈), splash (`assets/`), wired in `app.json`
 - [x] 🤖 `eas.json` build profiles, version 1.0.0
 - [x] 🤖 Privacy policy text (`docs/store/privacy-policy.md`)
 - [x] 🤖 Listing copy EN/SK/CZ (`docs/store/listing.md`)
-- [ ] ⚠️ Apple Developer enrollment approved (email from Apple, ~2 days)
-- [ ] ⚠️ Expo account: `npx eas-cli login`
+- [x] ⚠️ Apple Developer enrollment approved 2026-07-18
+- [x] ⚠️ Expo account: logged in, project linked (`@mikulasfrenak/zensmash`, EAS project 7da7e437)
 
 ## 1. Host the privacy policy ✅
 
 Served by our own Cloudflare Worker (`worker/index.ts`, route `GET /privacy`) — deploys with the web build on push to `main`.
 
 - [x] Public URL for both stores: **https://zensmash.mikulas-frenak.workers.dev/privacy**
-- [ ] After merging, open the URL once to verify it renders
+- [ ] Open the URL once to verify it renders
 
 ## 2. First cloud build
+
+**Pre-build sanity (EVERY build):**
+
+```bash
+npm ls expo-asset expo-constants   # must show single 12.x/18.x — a 57.x here = startup crash (see README)
+npm run lint && npm run typecheck && npm test
+```
 
 ```bash
 npx eas-cli build --platform ios --profile production
 ```
 
-- [ ] When asked, log in with your Apple ID and let EAS create certificates/profiles automatically
-- [ ] Wait ~20 min; build appears at expo.dev
+- [x] Apple ID login + EAS-generated certificates/profiles (done during first build)
+- [x] First iOS + Android builds completed — **crashed at startup** (expo-asset@57, see README) → fixed
+- [ ] Rebuild iOS with the fix and re-submit (Android fix already verified in emulator ✅)
 
 ## 3. App Store Connect setup (once)
 
 At [appstoreconnect.apple.com](https://appstoreconnect.apple.com):
 
-- [ ] My Apps → **+ New App** — platform iOS, name **ZenSmash**, bundle ID `com.mikulasfrenak.zensmash`, SKU `zensmash`
+- [x] App record created — EAS submit auto-created **ZenSmash**, ASC App ID `6792247615`, TestFlight group "Team (Expo)" with mikulas.frenak@gmail.com
 - [ ] App Information: category Games/Casual, age rating questionnaire (all "No" → 4+)
 - [ ] App Privacy: **not** "Data Not Collected" anymore (S8 added an opt-in analytics toggle — see `privacy-policy.md`). Declare data type **"Product Interaction"** under Usage Data: Collected: Yes · Linked to Identity: **No** · Used for Tracking: **No** (events carry no identifier of any kind — see `AGENTS.md` "Analytics"). If the toggle stays off by default this may also qualify for "Data Not Collected" only if Apple's form allows conditioning on an opt-in switch — check current App Store Connect wording before submitting
 - [ ] Pricing: Free, all territories
@@ -52,9 +66,10 @@ Suggested shots: fresh field with sun+clouds · mid-session with rainbow half fu
 npx eas-cli submit --platform ios --latest
 ```
 
-- [ ] Build lands in App Store Connect → TestFlight (processing ~15 min)
-- [ ] Add yourself + friends as internal testers — instant, no review
-- [ ] Play a full session on the TestFlight build (haptics, audio, 60fps, battery)
+- [x] First submit done (build 2 — the crashing one; superseded)
+- [ ] Submit the FIXED build; lands in TestFlight (processing ~15 min)
+- [x] TestFlight access enabled for mikulas.frenak@gmail.com (auto via EAS)
+- [ ] Play a full session on the fixed TestFlight build (haptics, audio, 60fps, battery)
 
 ## 6. Submit for review
 
@@ -64,8 +79,9 @@ npx eas-cli submit --platform ios --latest
 
 ## 7. Android (parallel track)
 
-- [ ] Google Play Console account ($25 one-time)
-- [ ] `npx eas-cli build --platform android --profile production`
+- [x] Google Play Console account created; identity verification (passport + address) submitted
+- [x] Preview APK built, crash found via Android Studio emulator + adb, fix verified ✅
+- [ ] `npx eas-cli build --platform android --profile production` (AAB with the fix)
 - [ ] Closed test: **12 testers opted in for 14 consecutive days** (new personal accounts) — recruit now, this is the critical path
 - [ ] Data safety form: declare **"App activity"** data type collected, purpose "Analytics," **not** shared with third parties for their own use (Cloudflare is infrastructure we operate, not a data buyer), encrypted in transit (HTTPS), collection is **optional/user-controlled** (off by default) — no persistent user identifier exists so there's nothing to delete on request. Play listing from `listing.md`
 
