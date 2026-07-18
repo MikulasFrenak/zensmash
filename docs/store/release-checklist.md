@@ -2,11 +2,14 @@
 
 Work through top to bottom. Items marked 🤖 are ready/automated; ⚠️ needs you.
 
-> **STATUS (2026-07-18):** Both platforms built & submitted once; first builds crashed at startup
-> (transitive expo-asset@57 — fixed, see README) and were rebuilt with the fix + rainbow Android icon.
-> Android fix verified in emulator ✅. **Now:** re-submit iOS to TestFlight (step 5) and verify on
-> iPhone, then screenshots (4) → ASC listing (3) → review (6). Android: production build + closed
-> test with 12 testers (7) — recruit them NOW, their 14-day clock is the critical path.
+> **STATUS (2026-07-18 evening): 🍏 iOS v1.0.0 (build 5) SUBMITTED — "Waiting for Review"!**
+> Full listing done: screenshots (resized to 1284×2778), EN description/keywords, privacy answers
+> published (Product Interaction, opt-in, not linked, no tracking), age rating 4+, content rights,
+> pricing Free/175 countries, contact info. v1.0 ships iPhone-only (see "Deferred to v1.1").
+> Typical review time: 24–48 h — watch for the email from Apple.
+> **Next: Android track (step 7)** — production AAB + closed test with 12 testers (the 14-day
+> clock is the only remaining critical path). Also: add SK/CZ listing localizations in ASC (can
+> be done anytime, even after approval).
 
 ## 0. Prerequisites ✅ all done
 
