@@ -48,6 +48,13 @@ Client posts to `/api/track` — same-origin path on web (works both standalone 
 - Design rules: no screen shake, no timers, no fail states, no scores/leaderboards. Calm is a feature. Squash-and-stretch stays subtle (≤4%). Rainbow = reward only.
 - Sounds are generated (Python stdlib, no deps) — see git history for the synth scripts; keep new sounds soft, musical, pentatonic-friendly.
 
+## Versioning & releases
+
+- **Build numbers are remote-managed** (`eas.json`: `appVersionSource: remote`, production `autoIncrement`). Never edit `buildNumber`/`versionCode` by hand.
+- **Marketing version** lives in `app.json` `version` and is bumped manually: patch (`1.0.x`) for store-released fixes, minor (`1.x.0`) for features. `runtimeVersion` follows `appVersion`, so each version forms its own OTA group.
+- **JS-only changes** (copy, colors, game balance, logic fixes) ship via `eas update --channel production` — no store review, reaches all builds of the current version. Native changes (new native module, icon/splash, permissions, SDK bump) REQUIRE a new `eas build` + store review + version bump.
+- Before any `eas build`: the pre-build sanity block in `docs/store/release-checklist.md` (dep-tree check + quality gate).
+
 ## Verification
 
 Automated tests cover `src/engine` and `src/state`. Game feel (haptics, audio latency, 60 fps with particles + ambient tick) is verified on a real device via Expo Go — simulator sign-off is not sufficient. Watch battery/thermals: the ambient sky tick redraws continuously — 20fps on native, halved to 10fps on web (CanvasKit's JS↔WASM marshalling makes web re-renders meaningfully more expensive) and paused entirely via the Page Visibility API when the tab/iframe isn't visible. Note: Safari's CanvasKit/WebGL performance is inherently heavier than Chrome's — an upstream react-native-skia/Safari characteristic, not something fixable in this codebase.

@@ -15,7 +15,7 @@
     "ios": {
       "bundleIdentifier": "com.mikulasfrenak.zensmash",
       "buildNumber": "1",
-      "supportsTablet": true,
+      "supportsTablet": false,
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
