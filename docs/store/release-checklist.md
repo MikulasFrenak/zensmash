@@ -2,22 +2,30 @@
 
 Work through top to bottom. Items marked 🤖 are ready/automated; ⚠️ needs you.
 
-> **STATUS (2026-07-18 night): 🍏🤖 BOTH PLATFORMS IN REVIEW — same day!**
-> **Android:** closed-test release (v1.0.0, versionCode 2) submitted to Google review — full store
-> listing (icon 512, feature graphic, screenshots, EN description), all declarations done (no ads
-> ID, no financial features, data safety = optional anonymous App interactions, content rating
-> Everyone, target 13+, contacts, countries). Once approved: create tester email list in
-> Testing → Closed testing → Testers, share the opt-in link
-> (`https://play.google.com/apps/testing/com.mikulasfrenak.zensmash`) with 12+ people → 14-day clock.
+> **STATUS (2026-07-21): 🤖 Android LIVE for testers · 🍏 iOS still in review, DSA blocker fixed today**
+> **Android:** closed-test release (v1.0.0, versionCode 2) **approved by Google** — status
+> "Available to testers on Google Play". Tester group solved without manual email collection:
+> created `zensmash-testers@googlegroups.com` (Google Group, "Anyone on the web can join"), added
+> as the tester list in Testing → Closed testing → Testers. Tester #1 (own account) installed via
+> the opt-in link (`https://play.google.com/apps/testing/com.mikulasfrenak.zensmash`) straight from
+> the Play Store — 14-day clock running. LinkedIn post drafted (EN + SK) to recruit the remaining
+> 11+ testers; publish whenever ready, no need to wait for anything else.
 >
-> **iOS (earlier today):** v1.0.0 (build 5) SUBMITTED — "Waiting for Review"
+> **iOS:** v1.0.0 (build 5) still "Waiting for Review" after 3 days (submitted 2026-07-18) — longer
+> than the typical 24–48 h. Found and fixed a real blocker today: App Store Connect → Business had
+> an unresolved **EU Digital Services Act trader-status declaration** (a compliance requirement
+> since Oct 2024, deadline had already passed) — banner read "you need to let us know whether or
+> not you are a trader" and would eventually pull EU availability regardless of review outcome.
+> Filed as **"not a trader"** (solo hobby/portfolio dev, not a registered commercial trade) — Business
+> page now shows "You have completed all regulatory requirements at this time." Whether this was
+> also silently gating the review itself is unconfirmed — recheck app status in 24 h; if still stuck,
+> contact Apple Developer Support directly.
 > Full listing done: screenshots (resized to 1284×2778), EN description/keywords, privacy answers
 > published (Product Interaction, opt-in, not linked, no tracking), age rating 4+, content rights,
 > pricing Free/175 countries, contact info. v1.0 ships iPhone-only (see "Deferred to v1.1").
-> Typical review time: 24–48 h — watch for the email from Apple.
-> **Next: Android track (step 7)** — production AAB + closed test with 12 testers (the 14-day
-> clock is the only remaining critical path). Also: add SK/CZ listing localizations in ASC (can
-> be done anytime, even after approval).
+> **Optional next for iOS:** set up a TestFlight **External Testing** group with a public link
+> (separate, lighter "Beta App Review", ~24 h) so the same LinkedIn audience can beta-test on iPhone
+> while the full App Store review is still pending.
 
 ## 0. Prerequisites ✅ all done
 
